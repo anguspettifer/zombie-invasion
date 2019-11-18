@@ -1,3 +1,5 @@
+import pytest
+
 from zombie_invasion.grid import Grid, Square, Row
 from mock import Mock
 
@@ -22,6 +24,14 @@ def test_row_renders_4_squares():
     row = Row(squares)
     playing_row = row.render
     assert playing_row == "sq1sq2sq3sq4"
+
+
+@pytest.mark.skip(reason="not sure how to handle this")
+def test_row_given_object_with_no_render_method():
+    # How do I want to handle this?
+    row = Row("just a string")
+
+    playing_row = row.render
 
 
 def test_grid_renders_4_rows():

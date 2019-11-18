@@ -16,6 +16,8 @@ class Row:
         # Worries:
         # Knows that squares is a list
         # Knows that each sq has a method called render
+        # Do I want to handle an exception here?
+        # Could be an attribute error or a type error
         return "".join([sq.render for sq in self.__squares])
 
 
@@ -25,7 +27,4 @@ class Grid:
 
     @property
     def render(self):
-        # Worries:
-        # Knows that squares is a list
-        # Knows that each sq has a method called render
         return "\n".join([sq.render for sq in self.__rows])

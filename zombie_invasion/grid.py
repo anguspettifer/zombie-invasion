@@ -1,4 +1,6 @@
-class Square:
+class BlankSquare:
+    # I think I should refactor this class to 'occupent', which can be nothing, human or zombie
+    # Sort of comes to the same thing though.
     def __init__(self, starter_square):
         self.__starter_square = starter_square
 

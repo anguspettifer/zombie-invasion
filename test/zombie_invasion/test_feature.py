@@ -1,4 +1,4 @@
-from zombie_invasion.grid import Grid, Square, Row
+from zombie_invasion.grid import Grid, BlankSquare, Row
 from zombie_invasion.human import Human
 
 
@@ -8,14 +8,14 @@ def test_grid_renders():
     # Then a 4x4 grid is rendered on the screen
 
     starter_square = "O"
-    squares = [Square(starter_square), Square(starter_square), Square(starter_square), Square(starter_square)]
+    squares = [BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)]
     rows = [Row(squares), Row(squares), Row(squares), Row(squares)]
 
     grid = Grid(rows)
-    grid.render = "OOOO\n" \
-                  "OOOO\n" \
-                  "OOOO\n" \
-                  "OOOO"
+    assert grid.render == "OOOO\n" \
+                          "OOOO\n" \
+                          "OOOO\n" \
+                          "OOOO"
 
 
 def test_grid_renders_with_human():
@@ -25,13 +25,13 @@ def test_grid_renders_with_human():
 
     starter_square = "O"
     human = Human()
-    squares = [Square(human), Square(starter_square), Square(starter_square), Square(starter_square)]
-    top_row = Row([Square(starter_square), Square(starter_square), Square(starter_square), Square(starter_square)])
+    squares = [BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)]
+    top_row = Row([human, BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)])
 
     rows = [top_row, Row(squares), Row(squares), Row(squares)]
 
     grid = Grid(rows)
-    grid.render = "HOOO\n" \
-                  "OOOO\n" \
-                  "OOOO\n" \
-                  "OOOO"
+    assert grid.render == "HOOO\n" \
+                          "OOOO\n" \
+                          "OOOO\n" \
+                          "OOOO"

@@ -1,12 +1,12 @@
 import pytest
 
-from zombie_invasion.grid import Grid, Square, Row
+from zombie_invasion.grid import Grid, BlankSquare, Row
 from mock import Mock
 
 
 def test_square_renders_empty_by_default():
     starter_square = "|_|"
-    square = Square(starter_square)
+    square = BlankSquare(starter_square)
     assert square.render == "|_|"
 
 

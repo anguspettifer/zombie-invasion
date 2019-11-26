@@ -54,3 +54,24 @@ def test_grid_renders_with_zombie():
                           "OOOO\n" \
                           "OOOO\n" \
                           "OOOO"
+
+
+def test_grid_renders_with_zombie_and_human():
+    # Given the means to start the program
+    # When the user initiates the start
+    # Then the human and zombie are on different squares
+    starter_square = "O"
+    zombie = Zombie()
+    human = Human()
+    squares = [BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)]
+    top_row = Row([zombie, BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)])
+    bottom_row = Row([human, BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)])
+
+    rows = [top_row, Row(squares), Row(squares), bottom_row]
+
+    grid = Grid(rows)
+    assert grid.render == "ZOOO\n" \
+                          "OOOO\n" \
+                          "OOOO\n" \
+                          "HOOO"
+

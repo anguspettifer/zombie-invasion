@@ -26,6 +26,31 @@ def test_row_renders_4_squares():
     assert playing_row == "sq1sq2sq3sq4"
 
 
+def test_row_human_in_row():
+    square_1 = Mock(render="sq1")
+    square_3 = Mock(render="sq3")
+    square_4 = Mock(render="sq4")
+    human = Mock(render="H")
+    squares = [square_1, human, square_3, square_4]
+    row = Row(squares)
+
+    assert row.human_in_row == [1]
+
+
+def test_row_move_left():
+    square_1 = Mock(render="sq1")
+    square_3 = Mock(render="sq3")
+    square_4 = Mock(render="sq4")
+    human = Mock(render="H")
+    squares = [square_1, human, square_3, square_4]
+    row = Row(squares)
+
+    row.move_left()
+
+    assert row.human_in_row == [0]
+
+
+
 @pytest.mark.skip(reason="not sure how to handle this")
 def test_row_given_object_with_no_render_method():
     # How do I want to handle this?
@@ -46,3 +71,16 @@ def test_grid_renders_4_rows():
     playing_grid = grid.render
     expected_playing_grid = "row1\nrow2\nrow3\nrow4"
     assert playing_grid == expected_playing_grid
+
+
+def test_grid_everybody_move_human_moves_left():
+    row_1 = Mock(render="row1", human_in_row=[])
+    row_2 = Mock(render="row2", human_in_row=[1], move_left=Mock())
+    row_3 = Mock(render="row3", human_in_row=[])
+    row_4 = Mock(render="row4", human_in_row=[])
+
+    rows = [row_1, row_2, row_3, row_4]
+
+    grid = Grid(rows)
+    grid.everybody_move()
+    row_2.move_left.assert_called()

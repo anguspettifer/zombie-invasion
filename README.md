@@ -58,3 +58,18 @@ Then the human will become a zombie*
 row too. tightly coupled?
 2. Struggling with the fact that __rows is private but I want to test the state of a specific row following
 running the everybody_move method in the grid class. I'm making it public, but only for testing purposes... is this ok??
+
+
+Origonal design is 
+Square -> Row -> Grid
+
+Now I think I want to get rid of Row and just give squares coordinates. 
+The big question is, should a square know it's co-ordinates? Or should it just know it's a square and will render. 
+I feel that the grid is responsible for coo-rdinate knowledge. 
+
+Thinking of how to display the board is a key and challenging problem
+I have a dict of objects with coordinates and I want to say:
+for all the coords, render the object relating to those coords, 
+For the others. don't. 
+
+pandas has the answer. in fact. lets just render dataframes. They are fine to look at for this purpose.

@@ -1,52 +1,39 @@
-class BlankSquare:
-    """Knows that is has a renderable state"""
-    def __init__(self, starter_square):
-        self.__starter_square = starter_square
-
-    @property
-    def render(self):
-        return self.__starter_square
-
-
-class Row:
-    """Knows how to order squares to render a playing row
-    Knows how to determin the location of a human in a row"""
-    def __init__(self, squares):
-        self.squares = squares
-        self.human_location = []
-
-    @property
-    def human_in_row(self):
-        human_location_list = []
-        for i in range(len(self.squares)):
-            if self.squares[i].render == 'H':
-                human_location_list.append(i)
-        return human_location_list
-
-    def move_left(self):
-        popped_square = self.squares.pop(0)
-        self.squares.append(popped_square)
-
-    @property
-    def render(self):
-        # Worries:
-        # Knows that squares is a list
-        # Knows that each sq has a method called render
-        # Do I want to handle an exception here?
-        # Could be an attribute error or a type error
-        return "".join([sq.render for sq in self.squares])
+import pandas as pd
 
 
 class Grid:
     """Knows how to stack rows to render a playing grid"""
-    def __init__(self, rows):
-        self.rows = rows
+    def __init__(self, size):
+        self.width = size[0]
+        self.length = size[1]
+        self.coordinates = {}
 
-    @property
-    def render(self):
-        return "\n".join([row.render for row in self.rows])
+    def add_human(self, human, coordinates):
+        self.coordinates[human] = coordinates
+
+    def add_zombie(self, zombie, coordinates):
+        self.coordinates[zombie] = coordinates
 
     def everybody_move(self):
-        for row in self.rows:
-            if row.human_in_row:
-                row.move_left()
+        for human, coordinates in self.coordinates.iteritems():
+            new_coordinates = [coordinates[0] - 1, coordinates[1]]
+            self.coordinates[human] = new_coordinates
+
+
+class Display:
+    """Knows how to display a grid"""
+    def __init__(self, grid):
+        self.grid = grid
+
+    def _create_empty_df(self):
+        empty_row = ["." for i in range(self.grid.width)]
+        return pd.DataFrame(data=[empty_row for i in range(self.grid.length)])
+
+    def _add_objects(self, df):
+        for object, coordinates in self.grid.coordinates.iteritems():
+            df[coordinates[0]].loc[coordinates[1]] = object.render
+        return df
+
+    def render(self):
+        df = self._create_empty_df()
+        return self._add_objects(df)

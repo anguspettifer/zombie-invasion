@@ -1,4 +1,7 @@
-from zombie_invasion.grid import Grid, BlankSquare, Row
+import pandas as pd
+from pandas.util.testing import assert_frame_equal
+
+from zombie_invasion.grid import Grid, Display
 from zombie_invasion.human import Human
 from zombie_invasion.zombie import Zombie
 
@@ -12,16 +15,13 @@ def test_grid_renders():
     # Given the means to start the program
     # When the user initiates the start
     # Then a 4x4 grid is rendered on the screen
+    grid = Grid(size=[4, 3])
+    display = Display(grid)
 
-    starter_square = "O"
-    squares = [BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)]
-    rows = [Row(squares), Row(squares), Row(squares), Row(squares)]
+    row = [".", ".", ".", "."]
+    expected_df = pd.DataFrame([row, row, row])
 
-    grid = Grid(rows)
-    assert grid.render == "OOOO\n" \
-                          "OOOO\n" \
-                          "OOOO\n" \
-                          "OOOO"
+    assert_frame_equal(display.render(), expected_df)
 
 
 def test_grid_renders_with_human():
@@ -29,18 +29,16 @@ def test_grid_renders_with_human():
     # When the user initiates the start
     # Then a human is occupying a single square
 
-    starter_square = "O"
     human = Human()
-    squares = [BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)]
-    top_row = Row([human, BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)])
+    grid = Grid(size=[4, 3])
+    grid.add_human(human, [0, 0])
+    display = Display(grid)
 
-    rows = [top_row, Row(squares), Row(squares), Row(squares)]
+    top_row = ["H", ".", ".", "."]
+    row = [".", ".", ".", "."]
+    expected_df = pd.DataFrame([top_row, row, row])
 
-    grid = Grid(rows)
-    assert grid.render == "HOOO\n" \
-                          "OOOO\n" \
-                          "OOOO\n" \
-                          "OOOO"
+    assert_frame_equal(display.render(), expected_df)
 
 
 def test_grid_renders_with_zombie():
@@ -48,39 +46,36 @@ def test_grid_renders_with_zombie():
     # When the user initiates the start
     # Then a zombie is occupying a single square
 
-    starter_square = "O"
     zombie = Zombie()
-    squares = [BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)]
-    top_row = Row([zombie, BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)])
+    grid = Grid(size=[4, 3])
+    grid.add_zombie(zombie, [0, 0])
+    display = Display(grid)
 
-    rows = [top_row, Row(squares), Row(squares), Row(squares)]
+    top_row = ["Z", ".", ".", "."]
+    row = [".", ".", ".", "."]
+    expected_df = pd.DataFrame([top_row, row, row])
 
-    grid = Grid(rows)
-    assert grid.render == "ZOOO\n" \
-                          "OOOO\n" \
-                          "OOOO\n" \
-                          "OOOO"
+    assert_frame_equal(display.render(), expected_df)
 
 
 def test_grid_renders_with_zombie_and_human():
     # Given the means to start the program
     # When the user initiates the start
     # Then the human and zombie are on different squares
-    starter_square = "O"
+
     zombie = Zombie()
     human = Human()
-    squares = [BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)]
-    top_row = Row([zombie, BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)])
-    bottom_row = Row([human, BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)])
+    grid = Grid(size=[4, 3])
+    grid.add_zombie(zombie, [0, 0])
+    grid.add_human(human, [0, 3])
+    display = Display(grid)
 
-    rows = [top_row, Row(squares), Row(squares), bottom_row]
+    top_row = ["Z", ".", ".", "."]
+    bottom_row = ["H", ".", ".", "."]
+    row = [".", ".", ".", "."]
+    expected_df = pd.DataFrame([top_row, row, bottom_row])
 
-    grid = Grid(rows)
-    assert grid.render == "ZOOO\n" \
-                          "OOOO\n" \
-                          "OOOO\n" \
-                          "HOOO"
-
+    assert_frame_equal(display.render(), expected_df)
 
 
 
@@ -95,30 +90,18 @@ def test_human_moves_one_space():
     # Given a program in progress
     # When it is time for a new go or turn
     # Then the human will move 1 pace in a random direction (N, NE, E, SE, S, SW, W, NW)
-    starter_square = "O"
     human = Human()
-    squares = [BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square), BlankSquare(starter_square)]
-    second_row = Row([BlankSquare(starter_square), human, BlankSquare(starter_square), BlankSquare(starter_square)])
-
-    rows = [Row(squares), second_row, Row(squares), Row(squares)]
-
-    grid = Grid(rows)
-
+    grid = Grid(size=[4, 3])
+    grid.add_human(human, [2, 1])
     grid.everybody_move()
+    display = Display(grid)
+    rendered_display = display.render()
 
-    possible_move_options = [
-        "HOOO\nOOOO\nOOOO\nOOOO",
-        "OHOO\nOOOO\nOOOO\nOOOO",
-        "OOHO\nOOOO\nOOOO\nOOOO",
-        "OOOO\nHOOO\nOOOO\nOOOO",
-        "OOOO\nOOHO\nOOOO\nOOOO",
-        "OOOO\nOOOO\nHOOO\nOOOO",
-        "OOOO\nOOOO\nOHOO\nOOOO",
-        "OOOO\nOOOO\nOOHO\nOOOO",
-    ]
-
-    assert grid.render in possible_move_options
-
+    possible_human_coordinates = [[2, 0], [3, 0], [3, 1], [3, 2], [2, 2], [2, 1], [1, 1], [1, 2]]
+    result = []
+    for coordinates in possible_human_coordinates:
+        result.append(rendered_display[coordinates[0]].loc[coordinates[1]])
+    assert "H" in result
 
 
 def test_human_does_not_move_if_wall():

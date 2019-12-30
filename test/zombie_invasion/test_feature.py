@@ -11,6 +11,7 @@ I can watch a human and zombie on the playing grid
 So that I can be amused
 """
 
+
 def test_grid_renders():
     # Given the means to start the program
     # When the user initiates the start
@@ -31,7 +32,7 @@ def test_grid_renders_with_human():
 
     human = Human()
     grid = Grid(size=[4, 3])
-    grid.add_human(human, [0, 0])
+    grid.add_player(human, [0, 0])
     display = Display(grid)
 
     top_row = ["H", ".", ".", "."]
@@ -48,7 +49,7 @@ def test_grid_renders_with_zombie():
 
     zombie = Zombie()
     grid = Grid(size=[4, 3])
-    grid.add_zombie(zombie, [0, 0])
+    grid.add_player(zombie, [0, 0])
     display = Display(grid)
 
     top_row = ["Z", ".", ".", "."]
@@ -66,16 +67,17 @@ def test_grid_renders_with_zombie_and_human():
     zombie = Zombie()
     human = Human()
     grid = Grid(size=[4, 3])
-    grid.add_zombie(zombie, [0, 0])
-    grid.add_human(human, [0, 3])
+    grid.add_player(zombie, [0, 0])
+    grid.add_player(human, [0, 2])
     display = Display(grid)
+    rendered_display = display.render()
 
     top_row = ["Z", ".", ".", "."]
     bottom_row = ["H", ".", ".", "."]
     row = [".", ".", ".", "."]
     expected_df = pd.DataFrame([top_row, row, bottom_row])
 
-    assert_frame_equal(display.render(), expected_df)
+    assert_frame_equal(rendered_display, expected_df)
 
 
 
@@ -92,7 +94,7 @@ def test_human_moves_one_space():
     # Then the human will move 1 pace in a random direction (N, NE, E, SE, S, SW, W, NW)
     human = Human()
     grid = Grid(size=[4, 3])
-    grid.add_human(human, [2, 1])
+    grid.add_player(human, [2, 1])
     grid.everybody_move()
     display = Display(grid)
     rendered_display = display.render()

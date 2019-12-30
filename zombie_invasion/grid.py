@@ -2,17 +2,14 @@ import pandas as pd
 
 
 class Grid:
-    """Knows how to stack rows to render a playing grid"""
+    """Knows how to store players in a grid"""
     def __init__(self, size):
         self.width = size[0]
         self.length = size[1]
         self.coordinates = {}
 
-    def add_human(self, human, coordinates):
+    def add_player(self, human, coordinates):
         self.coordinates[human] = coordinates
-
-    def add_zombie(self, zombie, coordinates):
-        self.coordinates[zombie] = coordinates
 
     def everybody_move(self):
         for human, coordinates in self.coordinates.iteritems():

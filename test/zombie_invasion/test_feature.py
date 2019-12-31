@@ -1,4 +1,5 @@
 import pandas as pd
+from mock import patch
 from pandas.util.testing import assert_frame_equal
 
 from zombie_invasion.grid import Grid, Display
@@ -15,7 +16,7 @@ So that I can be amused
 def test_grid_renders():
     # Given the means to start the program
     # When the user initiates the start
-    # Then a 4x4 grid is rendered on the screen
+    # Then a 4x3 grid is rendered on the screen
     grid = Grid(size=[4, 3])
     display = Display(grid)
 
@@ -80,7 +81,6 @@ def test_grid_renders_with_zombie_and_human():
     assert_frame_equal(rendered_display, expected_df)
 
 
-
 """
 As a viewer
 I can watch a human move in a random
@@ -89,6 +89,7 @@ So that I can be amused**
 
 
 def test_human_moves_one_space():
+    #TODO: to ask andy. There were times when this test passed and failed randomly
     # Given a program in progress
     # When it is time for a new go or turn
     # Then the human will move 1 pace in a random direction (N, NE, E, SE, S, SW, W, NW)
@@ -99,16 +100,24 @@ def test_human_moves_one_space():
     display = Display(grid)
     rendered_display = display.render()
 
-    possible_human_coordinates = [[2, 0], [3, 0], [3, 1], [3, 2], [2, 2], [2, 1], [1, 1], [1, 2]]
+    possible_human_coordinates = [[2, 0], [3, 0], [3, 1], [3, 2], [2, 2], [1, 2], [1, 1], [1, 0]]
     result = []
     for coordinates in possible_human_coordinates:
         result.append(rendered_display[coordinates[0]].loc[coordinates[1]])
     assert "H" in result
 
 
-def test_human_does_not_move_if_wall():
+@patch("zombie_invasion.grid.random")
+def test_human_does_not_move_if_wall(mock_random):
     # Given a program in progress
     # When a human moves into a wall
     # Then the human will not move on that go
-    return
+    mock_random.randint.return_value = 0
+    human = Human()
+    grid = Grid(size=[4, 3])
+    grid.add_player(human, [0, 0])
+    grid.everybody_move()
+    display = Display(grid)
+    rendered_display = display.render()
+    assert rendered_display[0].loc[0] == "H"
 

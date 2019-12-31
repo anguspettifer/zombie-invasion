@@ -12,7 +12,6 @@ I can watch a human and zombie on the playing grid
 So that I can be amused
 """
 
-
 def test_grid_renders():
     # Given the means to start the program
     # When the user initiates the start
@@ -96,7 +95,7 @@ def test_human_moves_one_space():
     human = Human()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [2, 1])
-    grid.everybody_move()
+    grid.human_move()
     display = Display(grid)
     rendered_display = display.render()
 
@@ -116,8 +115,29 @@ def test_human_does_not_move_if_wall(mock_random):
     human = Human()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [0, 0])
-    grid.everybody_move()
+    grid.human_move()
     display = Display(grid)
     rendered_display = display.render()
     assert rendered_display[0].loc[0] == "H"
 
+
+"""
+As a viewer
+I can watch a zombie move towards the human
+So that my desire for human demolition by zombies can be incited
+"""
+
+def test_zombie_moves_towards_human():
+    # Given a program in progress
+    # When it is time for a new go or turn
+    # Then the zombie will move 1 pace towards the human
+    human = Human()
+    zombie = Zombie()
+    grid = Grid(size=[4, 3])
+    grid.add_player(human, [0, 0])
+    grid.add_player(zombie, [0, 2])
+    grid.zombie_move()
+    display = Display(grid)
+    rendered_display = display.render()
+
+    assert rendered_display[0].loc[1] == "Z"

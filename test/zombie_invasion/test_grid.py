@@ -32,12 +32,12 @@ def test_add_human_off_grid():
 
 
 def test_grid_everybody_move_player_moves_randomly():
-    mock_player = Mock()
+    mock_player = Mock(render="H")
     starting_coordinates = [1, 2]
     grid = Grid(size=[4, 4])
     grid.add_player(mock_player, starting_coordinates)
 
-    grid.everybody_move()
+    grid.human_move()
     possible_x_coords = [0, 1, 2]
     possible_y_coords = [1, 2, 3]
     assert grid.coordinates[mock_player][0] in possible_x_coords
@@ -70,7 +70,7 @@ def test_human_cannot_move_through_grid_wall(mock_random):
     grid = Grid(size=[4, 4])
     grid.add_player(mock_player, starting_coordinates)
 
-    grid.everybody_move()
+    grid.human_move()
     assert grid.coordinates[mock_player] == starting_coordinates
 
 
@@ -106,3 +106,30 @@ def test_display_zombie_in_grid():
     display = Display(grid)
 
     assert_frame_equal(display.render(), expected_df)
+
+
+def test_zombie_moves_towards_human():
+    """
+    Start human in the top left and the zombie in the bottom left
+    The zombie should move towards the human
+    """
+    mock_human = Mock(render="H")
+    mock_zombie = Mock(render="Z")
+    grid = Grid(size=[4, 3])
+    grid.add_player(mock_human, [0, 0])
+    grid.add_player(mock_zombie, [0, 2])
+    grid.zombie_move()
+
+    display = Display(grid)
+    rendered_display = display.render()
+
+    assert rendered_display[0].loc[1] == "Z"
+
+
+@pytest.mark.parametrize("x, y, expected", [(4, 1, 3), (4, 2, 3), (2, 2, 2), (0, 3, 1)])
+def test__move_one_closer(x, y, expected):
+    """
+    Given a square in a certain dimension, returns one square closer to another square
+    """
+    grid = Grid(size=[4, 3])
+    assert grid._move_one_closer(x, y) == expected

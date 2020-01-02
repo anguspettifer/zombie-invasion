@@ -32,7 +32,7 @@ def test_grid_renders_with_human():
 
     human = Human()
     grid = Grid(size=[4, 3])
-    grid.add_player(human, [0, 0])
+    grid.add_human(human, [0, 0])
     display = Display(grid)
 
     top_row = ["H", ".", ".", "."]
@@ -49,7 +49,7 @@ def test_grid_renders_with_zombie():
 
     zombie = Zombie()
     grid = Grid(size=[4, 3])
-    grid.add_player(zombie, [0, 0])
+    grid.add_human(zombie, [0, 0])
     display = Display(grid)
 
     top_row = ["Z", ".", ".", "."]
@@ -67,8 +67,8 @@ def test_grid_renders_with_zombie_and_human():
     zombie = Zombie()
     human = Human()
     grid = Grid(size=[4, 3])
-    grid.add_player(zombie, [0, 0])
-    grid.add_player(human, [0, 2])
+    grid.add_human(zombie, [0, 0])
+    grid.add_human(human, [0, 2])
     display = Display(grid)
     rendered_display = display.render()
 
@@ -94,7 +94,7 @@ def test_human_moves_one_space():
     # Then the human will move 1 pace in a random direction (N, NE, E, SE, S, SW, W, NW)
     human = Human()
     grid = Grid(size=[4, 3])
-    grid.add_player(human, [2, 1])
+    grid.add_human(human, [2, 1])
     grid.human_move()
     display = Display(grid)
     rendered_display = display.render()
@@ -106,7 +106,7 @@ def test_human_moves_one_space():
     assert "H" in result
 
 
-@patch("zombie_invasion.grid.random")
+@patch("zombie_invasion.human.random")
 def test_human_does_not_move_if_wall(mock_random):
     # Given a program in progress
     # When a human moves into a wall
@@ -114,7 +114,7 @@ def test_human_does_not_move_if_wall(mock_random):
     mock_random.randint.return_value = 0
     human = Human()
     grid = Grid(size=[4, 3])
-    grid.add_player(human, [0, 0])
+    grid.add_human(human, [0, 0])
     grid.human_move()
     display = Display(grid)
     rendered_display = display.render()
@@ -134,8 +134,8 @@ def test_zombie_moves_towards_human():
     human = Human()
     zombie = Zombie()
     grid = Grid(size=[4, 3])
-    grid.add_player(human, [0, 0])
-    grid.add_player(zombie, [0, 2])
+    grid.add_human(human, [0, 0])
+    grid.add_zombie(zombie, [0, 2])
     grid.zombie_move()
     display = Display(grid)
     rendered_display = display.render()

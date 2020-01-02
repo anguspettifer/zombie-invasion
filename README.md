@@ -73,3 +73,7 @@ for all the coords, render the object relating to those coords,
 For the others. don't. 
 
 pandas has the answer. in fact. lets just render dataframes. They are fine to look at for this purpose.
+
+
+dependency inversion. A zombie or human should now how it moves
+a grid should call the method and provide the right information. 

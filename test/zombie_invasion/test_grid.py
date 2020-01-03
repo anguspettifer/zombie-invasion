@@ -1,9 +1,7 @@
 import pytest
-import pandas as pd
-from pandas.util.testing import assert_frame_equal
 
-from zombie_invasion.grid import Grid, Display
-from mock import Mock, patch
+from zombie_invasion.grid import Grid
+from mock import Mock
 
 
 def test_initializes_with_grid_size():
@@ -13,11 +11,19 @@ def test_initializes_with_grid_size():
 
 
 def test_add_human():
-    mock_human = Mock()
+    mock_human = Mock(render='H')
     starting_coordinates = [1, 2]
     grid = Grid(size=[4, 4])
-    grid.add_human(mock_human, starting_coordinates)
+    grid.add_player(mock_human, starting_coordinates)
     assert [1, 2] == grid.human_coordinates[mock_human]
+
+
+def test_add_zombie():
+    mock_zombie = Mock(render='Z')
+    starting_coordinates = [1, 2]
+    grid = Grid(size=[4, 4])
+    grid.add_player(mock_zombie, starting_coordinates)
+    assert [1, 2] == grid.zombie_coordinates[mock_zombie]
 
 
 def test_add_human_off_grid():
@@ -28,39 +34,63 @@ def test_add_human_off_grid():
     starting_coordinates = [5, 5]
     grid = Grid(size=[4, 4])
     with pytest.raises(ValueError):
-        grid.add_human(mock_human, starting_coordinates)
+        grid.add_player(mock_human, starting_coordinates)
 
 
-def test_display_empty_grid():
-    row = [".", ".", ".", "."]
-    expected_df = pd.DataFrame([row, row, row, row])
+def test_convert_if_needed():
+    """
+    Create a grid with a human and a zombie with the same coordinates
+    Assert that the human turns into a zombie
+    """
+    mock_human = Mock(render='Z')
+    mock_zombie = Mock(render="H")
+    coordinates = [2, 2]
+    grid = Grid(size=[4, 4])
+    grid.add_player(mock_human, coordinates)
+    grid.add_player(mock_zombie, coordinates)
 
-    grid = Mock(width=4, length=4, human_coordinates={}, zombie_coordinates={})
-    display = Display(grid)
-
-    assert_frame_equal(display.render(), expected_df)
-
-
-def test_display_human_in_grid():
-    row = [".", ".", ".", "."]
-    second_row = [".", "H", ".", "."]
-    expected_df = pd.DataFrame([row, second_row, row, row])
-
-    mock_human = Mock(render="H")
-    grid = Mock(width=4, length=4, human_coordinates={mock_human: [1, 1]}, zombie_coordinates={})
-    display = Display(grid)
-
-    assert_frame_equal(display.render(), expected_df)
+    grid.convert_if_needed()
+    assert len(grid.zombie_coordinates) == 2
 
 
-def test_display_zombie_in_grid():
-    row = [".", ".", ".", "."]
-    second_row = [".", "Z", ".", "."]
-    expected_df = pd.DataFrame([row, second_row, row, row])
+def test_convert_if_needed():
+    """
+    Create a grid with a human and a zombie with the same coordinates
+    Assert that the human turns into a zombie
+    """
+    mock_human = Mock(render='Z')
+    mock_zombie = Mock(render="H")
+    coordinates = [2, 2]
+    grid = Grid(size=[4, 4])
+    grid.add_player(mock_human, coordinates)
+    grid.add_player(mock_zombie, coordinates)
 
-    mock_zombie = Mock(render="Z")
-    grid = Mock(width=4, length=4, human_coordinates={}, zombie_coordinates={mock_zombie: [1, 1]})
-    display = Display(grid)
+    grid.convert_if_needed()
+    assert len(grid.zombie_coordinates) == 2
 
-    assert_frame_equal(display.render(), expected_df)
+
+def test_convert_if_needed_more_than_one_convert():
+    """
+    Create a grid with 3 humans and 3 zombies, each pair with the same coordinates
+    Assert that each human turns into a zombie
+    """
+    mock_human_1 = Mock(render='Z')
+    mock_zombie_1 = Mock(render="H")
+    coordinates_1 = [2, 2]
+    mock_human_2 = Mock(render='Z')
+    mock_zombie_2 = Mock(render="H")
+    coordinates_2 = [3, 3]
+    mock_human_3 = Mock(render='Z')
+    mock_zombie_3 = Mock(render="H")
+    coordinates_3 = [1, 1]
+    grid = Grid(size=[4, 4])
+    grid.add_player(mock_human_1, coordinates_1)
+    grid.add_player(mock_zombie_1, coordinates_1)
+    grid.add_player(mock_human_2, coordinates_2)
+    grid.add_player(mock_zombie_2, coordinates_2)
+    grid.add_player(mock_human_3, coordinates_3)
+    grid.add_player(mock_zombie_3, coordinates_3)
+
+    grid.convert_if_needed()
+    assert len(grid.zombie_coordinates) == 6
 

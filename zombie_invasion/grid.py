@@ -1,9 +1,8 @@
-import pandas as pd
+from zombie_invasion.zombie import Zombie
 
 
 class Grid:
-    """Knows how to store players in a grid"""
-    POSSIBLE_MOVES = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+    """Knows which players are where in the grid"""
 
     def __init__(self, size):
         # TODO: coords should be tuples not lists
@@ -11,19 +10,21 @@ class Grid:
         self.length = size[1]
         self.human_coordinates = {}
         self.zombie_coordinates = {}
+        self.player_map = {
+            'H': self.human_coordinates,
+            'Z': self.zombie_coordinates
+        }
 
-    def add_human(self, player, coordinates):
+    def add_player(self, player, coordinates):
+        """
+        Adds a player to the dictionary of the player type, along with the starting coordinates
+        """
         if coordinates[0] > self.width or coordinates[1] > self.length:
             raise ValueError
-        self.human_coordinates[player] = coordinates
-
-    def add_zombie(self, player, coordinates):
-        # TODO: Should I refactor this into one?
-        if coordinates[0] > self.width or coordinates[1] > self.length:
-            raise ValueError
-        self.zombie_coordinates[player] = coordinates
+        self.player_map[player.render][player] = coordinates
 
     def human_move(self):
+        #TODO: These 2 method could maybe be combined? and game is responsible for knowing the arguments
         for human, coordinates in self.human_coordinates.items():
             self.human_coordinates[human] = human.move(coordinates, [self.width, self.length])
 
@@ -31,23 +32,14 @@ class Grid:
         for zombie, coordinates in self.zombie_coordinates.items():
             self.zombie_coordinates[zombie] = zombie.move(coordinates, self.human_coordinates)
 
+    def convert_if_needed(self):
+        # TODO: move to game class
+        # TODO: 2 way dict class?
+        for human, human_coords in self.human_coordinates.items():
+            for zombie, zombie_coords in self.zombie_coordinates.items():
+                if human_coords == zombie_coords:
+                    human_to_delete = human
+                    zombie_coords_to_add = human_coords
+        self.human_coordinates.pop(human_to_delete)
+        self.zombie_coordinates[Zombie()] = zombie_coords_to_add
 
-class Display:
-    """Knows how to display a grid"""
-    def __init__(self, grid):
-        self.grid = grid
-
-    def _create_empty_df(self):
-        empty_row = ["." for i in range(self.grid.width)]
-        return pd.DataFrame(data=[empty_row for i in range(self.grid.length)])
-
-    def _add_objects(self, df):
-        for object, human_coordinates in self.grid.human_coordinates.items():
-            df[human_coordinates[0]].loc[human_coordinates[1]] = object.render
-        for object, zombie_coordinates in self.grid.zombie_coordinates.items():
-            df[zombie_coordinates[0]].loc[zombie_coordinates[1]] = object.render
-        return df
-
-    def render(self):
-        df = self._create_empty_df()
-        return self._add_objects(df)

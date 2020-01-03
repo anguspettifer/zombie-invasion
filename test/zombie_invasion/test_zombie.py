@@ -34,9 +34,11 @@ def test_zombie_move_choice():
     assert zombie.move(coordinates, human_coordinates) == [1, 3]
 
 
+def side_effect(list_):
+    return list_[0]
+
 @patch("zombie_invasion.zombie.random")
 def test_zombie_move_random(random):
-    #TODO: struggling to test randomness here. since the dictionary iteration changes order anyway so even stubbing out randint does nto guarantee a result
     """
     Given the coordinates of the 2 humans that are equidistance, a zombie will move one square closer to one at random
     """
@@ -47,17 +49,35 @@ def test_zombie_move_random(random):
         Mock(): [1, 0]
     }
 
-    random.randint.return_value = 0
+    random.choice.side_effect = side_effect
     assert zombie.move(coordinates, human_coordinates) == [1, 3]
 
 
-def test_zombie_move_memory():
+@patch("zombie_invasion.zombie.random")
+def test_zombie_move_memory(random):
     """
     A zombie moved towards a human on the previous go
-    Now it is equidistance from 2 humans, one of which was the one it chased the previous go
+    Now it is equidistant from 2 humans, one of which was the one it chased the previous go
     It will move towards the one it faced the previous go.
     """
+    zombie = Zombie()
+    coordinates = [1, 1]
+    mock_human_1 = Mock()
+    mock_human_2 = Mock()
 
+    human_coordinates_1 = {
+        mock_human_1: [3, 1],
+        mock_human_2: [3, 3]
+    }
+
+    human_coordinates_2 = {
+        mock_human_1: [3, 1],
+        mock_human_2: [2, 2]
+    }
+
+    random.choice.side_effect = side_effect
+    new_coordinates = zombie.move(coordinates, human_coordinates_1)
+    assert zombie.move(new_coordinates, human_coordinates_2) == [3, 1]
 
 
 @pytest.mark.parametrize("x, y, expected", [(4, 1, 3), (4, 2, 3), (2, 2, 2), (0, 3, 1)])
@@ -69,18 +89,24 @@ def test__move_one_closer(x, y, expected):
     assert zombie._move_one_closer(x, y) == expected
 
 
-@patch("zombie_invasion.zombie.random")
-def test__random_closest_human_coordinates(random):
+def test__random_closest_human_coordinates():
     """
-    Given human coordinates and their absolute distances
-    Test returns random closest human
+    Given 2 humans equidistant and one further away
+    Test returns random the two closest
     """
     zombie = Zombie()
     coordinates = [1, 2]
-    human_coordinates = {
-        Mock(): [1, 4],
-        Mock(): [1, 0]
-    }
-    random.randint.return_value = 0
+    human_1 = Mock()
+    human_2 = Mock()
+    human_3 = Mock()
 
-    assert zombie._random_closest_human_coordinates(coordinates, human_coordinates) == [1, 4]
+    human_coordinates = {
+        human_1: [1, 4],
+        human_2: [1, 0],
+        human_3: [0, 0]
+    }
+
+    assert zombie._closest_human_coordinates(coordinates, human_coordinates) == {
+        human_1: [1, 4],
+        human_2: [1, 0]
+    }

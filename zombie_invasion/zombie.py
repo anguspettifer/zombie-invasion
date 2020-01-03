@@ -4,6 +4,11 @@ import math
 
 class Zombie:
     def __init__(self):
+        """
+        Once a zombie starts hunting a human, it keeps hunting it and so needs to know that attribute.
+        Initially it is not hunting a human.
+        """
+        self.__hunted_human = None
         self.render = 'Z'
 
     @staticmethod
@@ -25,31 +30,39 @@ class Zombie:
         return human_coordinates_distance
 
     @staticmethod
-    def _random_closest_human_coordinates(zombie_coordinates, human_coordinates):
-        closest_humans = []
+    def _closest_human_coordinates(zombie_coordinates, human_coordinates):
+        """
+        Checks the distance of all the humans from the zombie
+        Returns the coordinates of all the equidistant closest humans
+        """
+        closest_humans_and_coordinates = {}
         human_coordinates_distance = []
         min_distance = math.inf
+
         for human, coordinates in human_coordinates.items():
             distance = abs(zombie_coordinates[0] - coordinates[0]) + abs(zombie_coordinates[1] - coordinates[1])
             min_distance = distance if distance <= min_distance else min_distance
             human_coordinates_distance.append((human, coordinates, distance))
 
-        # min_distance = min([x[2] for x in human_coordinates_distance])
-
         for human, coordinates, distance in human_coordinates_distance:
+            # TODO: must be a way to edit the old dict rather than create a new one
             if distance == min_distance:
-                closest_humans.append(coordinates)
+                closest_humans_and_coordinates[human] = coordinates
 
-        random_int = random.randint(0, len(closest_humans) - 1)
-
-        return closest_humans[random_int]
+        return closest_humans_and_coordinates
 
     def move(self, zombie_coordinates, human_coordinates):
         """
         A zombie moves 1 square closer to the nearest human
+        If more than one human is closest it moves to one them at random
         """
-        random_closest_human_coordinates = self._random_closest_human_coordinates(zombie_coordinates, human_coordinates)
+        closest_humans_and_coordinates = self._closest_human_coordinates(zombie_coordinates, human_coordinates)
+        if self.__hunted_human not in closest_humans_and_coordinates.keys():
+            self.__hunted_human = random.choice(list(closest_humans_and_coordinates))
 
-        new_x_coordinates = self._move_one_closer(zombie_coordinates[0], random_closest_human_coordinates[0])
-        new_y_coordinates = self._move_one_closer(zombie_coordinates[1], random_closest_human_coordinates[1])
+        closest_human_coordinates = closest_humans_and_coordinates[self.__hunted_human]
+
+        new_x_coordinates = self._move_one_closer(zombie_coordinates[0], closest_human_coordinates[0])
+        new_y_coordinates = self._move_one_closer(zombie_coordinates[1], closest_human_coordinates[1])
+
         return [new_x_coordinates, new_y_coordinates]

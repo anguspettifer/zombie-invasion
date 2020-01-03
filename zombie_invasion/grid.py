@@ -24,11 +24,11 @@ class Grid:
         self.zombie_coordinates[player] = coordinates
 
     def human_move(self):
-        for human, coordinates in self.human_coordinates.iteritems():
+        for human, coordinates in self.human_coordinates.items():
             self.human_coordinates[human] = human.move(coordinates, [self.width, self.length])
 
     def zombie_move(self):
-        for zombie, coordinates in self.zombie_coordinates.iteritems():
+        for zombie, coordinates in self.zombie_coordinates.items():
             self.zombie_coordinates[zombie] = zombie.move(coordinates, self.human_coordinates)
 
 
@@ -42,9 +42,9 @@ class Display:
         return pd.DataFrame(data=[empty_row for i in range(self.grid.length)])
 
     def _add_objects(self, df):
-        for object, human_coordinates in self.grid.human_coordinates.iteritems():
+        for object, human_coordinates in self.grid.human_coordinates.items():
             df[human_coordinates[0]].loc[human_coordinates[1]] = object.render
-        for object, zombie_coordinates in self.grid.zombie_coordinates.iteritems():
+        for object, zombie_coordinates in self.grid.zombie_coordinates.items():
             df[zombie_coordinates[0]].loc[zombie_coordinates[1]] = object.render
         return df
 

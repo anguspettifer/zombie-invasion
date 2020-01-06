@@ -33,13 +33,20 @@ class Grid:
             self.zombie_coordinates[zombie] = zombie.move(coordinates, self.human_coordinates)
 
     def convert_if_needed(self):
+        """
+        If a human and zombie have the same coordinates
+        The human is removed and a new zombie is instansiated with those coordinates
+        """
         # TODO: move to game class
         # TODO: 2 way dict class?
+        humans_to_delete = []
+        zombie_coords_to_add = []
         for human, human_coords in self.human_coordinates.items():
             for zombie, zombie_coords in self.zombie_coordinates.items():
                 if human_coords == zombie_coords:
-                    human_to_delete = human
-                    zombie_coords_to_add = human_coords
-        self.human_coordinates.pop(human_to_delete)
-        self.zombie_coordinates[Zombie()] = zombie_coords_to_add
-
+                    humans_to_delete.append(human)
+                    zombie_coords_to_add.append(human_coords)
+        for human in humans_to_delete:
+            self.human_coordinates.pop(human)
+        for coords in zombie_coords_to_add:
+            self.zombie_coordinates[Zombie()] = coords

@@ -50,6 +50,20 @@ So that my desire for human demolition by zombies can be satisfied**
 When a zombie occupies the same square as the human
 Then the human will become a zombie*
 
+**As a viewer
+I can trigger the start of the game
+So that I can watch the mayhem unfold
+
+*Given a terminal in the correct directory
+When I trigger the start of the game
+Then I will be asked for:
+    - dimensions
+    - number of humans
+    - number of zombies
+
+* Given I have triggered the start of the game 
+When I input the paramaters
+Then the game will play out on my screen
 
 
 ## Considerations:

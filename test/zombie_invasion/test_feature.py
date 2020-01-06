@@ -2,6 +2,7 @@ import pandas as pd
 from mock import patch
 from pandas.util.testing import assert_frame_equal
 
+from zombie_invasion.game import Game
 from zombie_invasion.grid import Grid
 from zombie_invasion.display import Display
 from zombie_invasion.human import Human
@@ -163,3 +164,29 @@ def test_zombie_turns_human_into_zombie():
     grid.zombie_move()
     grid.convert_if_needed()
     assert len(grid.zombie_coordinates) == 2
+
+
+"""As a viewer
+I can trigger the start of the game
+So that I can watch the mayhem unfold
+"""
+
+@patch('zombie_invasion.game.print')
+def test_game_inputs(mock_print):
+    # Given a terminal in the correct directory
+    # When I trigger the start of the game
+    # Then I will be asked for:
+    #     - dimensions
+    #     - number of humans
+    #     - number of zombies
+    game = Game()
+    game.start()
+    mock_print.assert_called_with("Please enter dimensions")
+
+@patch('zombie_invasion.game.raw_input')
+def test_game_plays(raw_input):
+    # Given I have triggered the start of the game
+    # When I input the paramaters
+    # Then the game will play out on my screen
+
+    pass

@@ -1,5 +1,6 @@
 import pandas as pd
-from mock import patch
+import time
+from mock import patch, call
 from pandas.util.testing import assert_frame_equal
 
 from zombie_invasion.game import Game
@@ -171,22 +172,34 @@ I can trigger the start of the game
 So that I can watch the mayhem unfold
 """
 
+
 @patch('zombie_invasion.game.print')
-def test_game_inputs(mock_print):
+@patch('zombie_invasion.game.input')
+def test_game_inputs(mock_input, mock_print):
     # Given a terminal in the correct directory
     # When I trigger the start of the game
     # Then I will be asked for:
     #     - dimensions
     #     - number of humans
     #     - number of zombies
+    mock_input.return_value = 2
     game = Game()
-    game.start()
-    mock_print.assert_called_with("Please enter dimensions")
+    game.set_up()
+    mock_print.assert_has_calls([
+        call("Please enter dimensions"),
+        call("Please enter number of humans"),
+        call("Please enter number of zombies")])
 
-@patch('zombie_invasion.game.raw_input')
-def test_game_plays(raw_input):
+
+def test_game_plays():
     # Given I have triggered the start of the game
-    # When I input the paramaters
+    # Once I have input the paramaters
     # Then the game will play out on my screen
-
-    pass
+    game = Game()
+    game.dimensions = [4, 4]
+    game.number_of_zombies = 5
+    game.number_of_humans = 2
+    game.start()
+    time.sleep(10)
+    assert game.number_of_humans == 0
+    assert game.number_of_zombies == 7

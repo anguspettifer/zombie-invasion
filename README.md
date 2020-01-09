@@ -91,3 +91,8 @@ pandas has the answer. in fact. lets just render dataframes. They are fine to lo
 
 dependency inversion. A zombie or human should now how it moves
 a grid should call the method and provide the right information. 
+
+
+Very stuck on "conver_if_needed" method in grid
+felt like a big decision to make a new class
+Feels like it "should" be easier

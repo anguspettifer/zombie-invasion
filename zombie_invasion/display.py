@@ -12,7 +12,10 @@ class Display:
 
     def _add_objects(self, df):
         for object, human_coordinates in self.grid.human_coordinates.items():
-            df[human_coordinates[0]].loc[human_coordinates[1]] = object.render
+            try:
+                df[human_coordinates[0]].loc[human_coordinates[1]] = object.render
+            except KeyError:
+                print(object, type(object))
         for object, zombie_coordinates in self.grid.zombie_coordinates.items():
             df[zombie_coordinates[0]].loc[zombie_coordinates[1]] = object.render
         return df

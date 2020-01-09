@@ -37,3 +37,15 @@ def test_display_zombie_in_grid():
     display = Display(grid)
 
     assert_frame_equal(display.render(), expected_df)
+
+
+def test_display_no_humans():
+    row = [".", ".", ".", "."]
+    second_row = [".", "Z", ".", "."]
+    expected_df = pd.DataFrame([row, second_row, row, row])
+
+    mock_zombie = Mock(render="Z")
+    grid = Mock(width=4, length=4, human_coordinates={}, zombie_coordinates={mock_zombie: [1, 1]})
+    display = Display(grid)
+
+    assert_frame_equal(display.render(), expected_df)

@@ -1,3 +1,5 @@
+import time
+
 from mock import patch, Mock, call
 
 from zombie_invasion.game import Game
@@ -67,7 +69,6 @@ def test_add_players(mock_random):
         call("h5", (5, 5))
     ])
 
-
 ## are these feature tests?
 
 @patch('zombie_invasion.game.print')
@@ -99,4 +100,24 @@ def test_game_set_up_adds_humans_and_zombies(mock_input, mock_print):
     zombies = game.grid.zombie_coordinates.keys()
     assert all(isinstance(x, Zombie) for x in zombies)
 
+@patch('zombie_invasion.game.print')
+@patch('zombie_invasion.game.input')
+def test_game_start_calls_human_move_until_there_are_no_humans(mock_input, mock_print):
+    """
+    Create a game with 1 human and 1 zombie
+    Start the game
+    Assert that when there are no zombies, game.end is called
+    """
+    mock_input.side_effect = [(4, 3), 5, 3]
+    game = Game()
+    game._end = Mock()
 
+    game.set_up()
+
+    game.start()
+
+    time.sleep(3)
+
+    assert len(game.grid.human_coordinates) == 0
+    assert len(game.grid.zombie_coordinates) == 8
+    mock_print.assert_called_with("Game over")

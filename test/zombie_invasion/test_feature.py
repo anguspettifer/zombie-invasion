@@ -98,7 +98,7 @@ def test_human_moves_one_space():
     human = Human()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [2, 1])
-    grid.human_move()
+    grid.humans_move()
     display = Display(grid)
     rendered_display = display.render()
 
@@ -118,7 +118,7 @@ def test_human_does_not_move_if_wall(mock_random):
     human = Human()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [0, 0])
-    grid.human_move()
+    grid.humans_move()
     display = Display(grid)
     rendered_display = display.render()
     assert rendered_display[0].loc[0] == "H"
@@ -139,7 +139,7 @@ def test_zombie_moves_towards_human():
     grid = Grid(size=[4, 3])
     grid.add_player(human, [0, 0])
     grid.add_player(zombie, [0, 2])
-    grid.zombie_move()
+    grid.zombies_move()
     display = Display(grid)
     rendered_display = display.render()
 
@@ -162,7 +162,7 @@ def test_zombie_turns_human_into_zombie():
     grid = Grid(size=[4, 3])
     grid.add_player(human, [0, 0])
     grid.add_player(zombie, [0, 1])
-    grid.zombie_move()
+    grid.zombies_move()
     grid.convert_if_needed()
     assert len(grid.zombie_coordinates) == 2
 
@@ -182,7 +182,7 @@ def test_game_inputs(mock_input, mock_print):
     #     - dimensions
     #     - number of humans
     #     - number of zombies
-    mock_input.return_value = 2
+    mock_input.side_effect = [(4, 3), 5, 3]
     game = Game()
     game.set_up()
     mock_print.assert_has_calls([
@@ -203,3 +203,6 @@ def test_game_plays():
     time.sleep(10)
     assert game.number_of_humans == 0
     assert game.number_of_zombies == 7
+
+
+# 3 Zombies will be randomly placed in the grid (In red) but will not occupy a square that is already occupied by a Human or Zombie.

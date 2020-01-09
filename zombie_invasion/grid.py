@@ -6,8 +6,8 @@ class Grid:
     """Knows which players are where in the grid"""
 
     def __init__(self, size):
-        self.width = size[0]
-        self.length = size[1]
+        self.width = size[0] - 1
+        self.length = size[1] - 1
         self.human_coordinates = {}
         self.zombie_coordinates = {}
         self.player_map = {
@@ -19,16 +19,18 @@ class Grid:
         """
         Adds a player to the dictionary of the player type, along with the starting coordinates
         """
-        if coordinates[0] > (self.width - 1) or coordinates[1] > (self.length - 1):
+        if coordinates[0] > (self.width) or coordinates[1] > (self.length):
             raise ValueError
         self.player_map[player.render][player] = coordinates
 
     def humans_move(self):
+        print("Human move")
         #TODO: These 2 method could maybe be combined? and game is responsible for knowing the arguments
         for human, coordinates in self.human_coordinates.items():
             self.human_coordinates[human] = human.move(coordinates, [self.width, self.length])
 
     def zombies_move(self):
+        print("Zombie move")
         for zombie, coordinates in self.zombie_coordinates.items():
             self.zombie_coordinates[zombie] = zombie.move(coordinates, self.human_coordinates)
 
@@ -50,40 +52,10 @@ class Grid:
         self.human_coordinates = conversion.source_items
         self.zombie_coordinates = conversion.destination_items
 
-        # humans_to_delete = []
-        # zombie_coords_to_add = []
-        # current_humans = list(self.human_coordinates.keys())
-        # attacking_zombies = list(self.zombie_coordinates.keys())
-        # for human in current_humans:
-        #     # The reason this doesn't work is because when we iterate though zombies, on the second run through it doesn't iterate as we have already removed the firs item
-        #     # If it DID iterate it would still be an issue as we would be looking
-        #     for zombie in attacking_zombies:
-        #         if self.human_coordinates[human] == self.zombie_coordinates[zombie]:
-        #             humans_to_delete.append(current_humans.pop(current_humans.index(human)))
-        #             zombie_coords_to_add.append(attacking_zombies.pop(attacking_zombies.index(zombie)))
-        #
-        # for human in humans_to_delete:
-        #     try:
-        #         self.human_coordinates.pop(human)
-        #     except KeyError:
-        #         # 2 zombies are attacking the same human
-        #         continue
-        #
-        # for zombie in zombie_coords_to_add:
-        #     self.zombie_coordinates[Zombie()] = self.zombie_coordinates[zombie]
-        #
-        # # for human, human_coords in self.human_coordinates.items():
-        # #     for zombie, zombie_coords in self.zombie_coordinates.items():
-        # #         if human_coords == zombie_coords and zombie_coords not in zombie_coords_to_add:
-        # #             humans_to_delete.append(human)
-        # #             zombie_coords_to_add.append(human_coords)
-        #
-        # #
-        # # for coords in self._get_unique(zombie_coords_to_add):
-        # #     self.zombie_coordinates[Zombie()] = coords
-
 
 class Conversion:
+    # TODO: Can we use reduce??
+
     """ Knows how to convert source object to destination based on matching criteria """
     def __init__(self, source_items, destination_items, source_object, destination_object):
         self.source_items = source_items
@@ -116,11 +88,10 @@ class Conversion:
         sources_to_delete = []
         for criteria, number in criteria_and_sources_to_delete.items():
                 for key, value in self.source_items.items():
-                    if criteria == value:
+                    if criteria == tuple(value):
                         sources_to_delete.append(key)
                         number -= 1
                         if number == 0: break
 
         for source in sources_to_delete: del self.source_items[source]
 
-        # TODO: Can we use reduce??

@@ -190,17 +190,15 @@ def test_game_inputs(mock_input, mock_print):
         call("Please enter number of humans"),
         call("Please enter number of zombies")])
 
-
-def test_game_plays():
+@patch('zombie_invasion.game.input')
+def test_game_plays(mock_input):
     # Given I have triggered the start of the game
     # Once I have input the paramaters
     # Then the game will play out on my screen
+    mock_input.side_effect = [(10, 10), 5, 3]
     game = Game()
-    game.dimensions = [4, 4]
-    game.number_of_zombies = 5
-    game.number_of_humans = 2
+    game.set_up()
     game.start()
-    time.sleep(10)
     assert game.number_of_humans == 0
     assert game.number_of_zombies == 7
 

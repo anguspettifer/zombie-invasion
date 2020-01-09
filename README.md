@@ -96,3 +96,8 @@ a grid should call the method and provide the right information.
 Very stuck on "conver_if_needed" method in grid
 felt like a big decision to make a new class
 Feels like it "should" be easier
+
+
+Out by one error:
+- should Display know that it has to add 1 to grid width?
+- Or should Human know that it has to subtract one?

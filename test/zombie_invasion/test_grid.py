@@ -6,8 +6,8 @@ from mock import Mock
 
 def test_initializes_with_grid_size():
     grid = Grid(size=[4, 4])
-    assert grid.length == 4
-    assert grid.width == 4
+    assert grid.length == 3
+    assert grid.width == 3
 
 
 def test_add_human():

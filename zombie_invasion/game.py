@@ -28,8 +28,8 @@ class Game:
 
     def _add_players(self, player_class, number_of_players):
         for i in range(number_of_players):
-            x_coordinate = random.randint(0, self.grid.width - 1)
-            y_coordinate = random.randint(0, self.grid.length - 1)
+            x_coordinate = random.randint(0, self.grid.width)
+            y_coordinate = random.randint(0, self.grid.length)
             self.grid.add_player(player_class(), [x_coordinate, y_coordinate])
 
     def set_up(self):
@@ -43,9 +43,16 @@ class Game:
 
     def start(self):
         while len(self.grid.human_coordinates) > 0:
+            self.number_of_humans = len(self.grid.human_coordinates)
+            self.number_of_zombies = len(self.grid.zombie_coordinates)
+            print(f"Human count: {self.number_of_humans}")
+            print(f"Zombie count: {self.number_of_zombies}")
             print(Display(self.grid).render())
             self.grid.humans_move()
             self.grid.zombies_move()
             self.grid.convert_if_needed()
 
-        self._end()
+        print(f"Human count: {self.number_of_humans}")
+        print(f"Zombie count: {self.number_of_zombies}")
+        print(Display(self.grid).render())
+        print("Game over")

@@ -7,6 +7,7 @@ from zombie_invasion.zombie import Zombie
 
 
 class Game:
+    """Knows the artifacts of the game, monitors human life, ends game on extinction"""
 
     def __init__(self):
         self.dimensions = None
@@ -49,10 +50,14 @@ class Game:
             print(f"Zombie count: {self.number_of_zombies}")
             print(Display(self.grid).render())
             self.grid.humans_move()
+            print(Display(self.grid).render())
             self.grid.zombies_move()
+            print(Display(self.grid).render())
             self.grid.convert_if_needed()
 
+        self.number_of_humans = len(self.grid.human_coordinates)
+        self.number_of_zombies = len(self.grid.zombie_coordinates)
         print(f"Human count: {self.number_of_humans}")
         print(f"Zombie count: {self.number_of_zombies}")
         print(Display(self.grid).render())
-        print("Game over")
+        print("Humans extinct!")

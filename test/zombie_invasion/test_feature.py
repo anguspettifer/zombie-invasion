@@ -200,7 +200,7 @@ def test_game_plays(mock_input):
     game.set_up()
     game.start()
     assert game.number_of_humans == 0
-    assert game.number_of_zombies == 7
+    assert game.number_of_zombies == 8
 
 
 # 3 Zombies will be randomly placed in the grid (In red) but will not occupy a square that is already occupied by a Human or Zombie.

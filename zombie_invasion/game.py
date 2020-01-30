@@ -52,6 +52,8 @@ class Game:
         print(f"Please adjust screen to the size of the below grid:\n{df}")
 
     def start(self):
+        # TODO: This is def in breach of srp
+        i = 0
         while len(self.grid.human_coordinates) > 0:
             self.number_of_humans = len(self.grid.human_coordinates)
             self.number_of_zombies = len(self.grid.zombie_coordinates)
@@ -63,6 +65,7 @@ class Game:
             self.grid.zombies_move()
             print(Display(self.grid).render())
             self.grid.convert_if_needed()
+            i += 1
             sleep(0.4)
 
         self.number_of_humans = len(self.grid.human_coordinates)
@@ -70,4 +73,5 @@ class Game:
         print(f"Human count: {self.number_of_humans}")
         print(f"Zombie count: {self.number_of_zombies}")
         print(Display(self.grid).render())
+        print(f"Number of turns: {i}")
         print("Humans extinct!")

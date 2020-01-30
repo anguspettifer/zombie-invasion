@@ -125,16 +125,39 @@ def test_game_start_calls_human_move_until_there_are_no_humans(mock_input):
     Start the game
     Assert that when there are no zombies, game.end is called
     """
-    mock_input.side_effect = [4, 3, 5, 3]
+    mock_input.side_effect = [4, 3, 1, 1]
     game = Game()
     game.set_up()
 
     game.start()
 
-
     assert len(game.grid.human_coordinates) == 0
     assert len(game.grid.zombie_coordinates) == 8
-    # mock_print.assert_called_with("Game over")
+
+
+@patch('zombie_invasion.game.print')
+@patch('zombie_invasion.game.input')
+def test_game_start_calls_keeps_track_of_number_of_turns(mock_input, mock_print):
+    """
+    Create a game with 1 human and 1 zombie
+    Start the game
+    Assert that when there are no zombies, game.end is called
+    """
+    # TODO: This is a terrible test
+    mock_input.side_effect = [2, 2, 1, 1]
+    game = Game()
+    game.set_up()
+
+    game.start()
+
+    expected_call = call("Number of turns: 1")
+    bools = []
+    for arg in mock_print.call_args_list:
+        try:
+            bools.append(expected_call == arg)
+        except ValueError: # When arg is a dataframe
+            continue
+    assert True in bools
 
 
 @patch('zombie_invasion.game.print')

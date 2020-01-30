@@ -1,4 +1,5 @@
 import random
+from time import sleep
 
 from zombie_invasion.display import Display
 from zombie_invasion.grid import Grid
@@ -42,6 +43,11 @@ class Game:
         self._add_players(Human, self.number_of_humans)
         self._add_players(Zombie, self.number_of_zombies)
 
+    def initial_display(self):
+        # TODO: I think these print statements want to go into the display object
+        df = Display(self.grid).create_empty_df()
+        print(f"Please adjust screen to the size of the below grid:\n{df}")
+
     def start(self):
         while len(self.grid.human_coordinates) > 0:
             self.number_of_humans = len(self.grid.human_coordinates)
@@ -54,6 +60,7 @@ class Game:
             self.grid.zombies_move()
             print(Display(self.grid).render())
             self.grid.convert_if_needed()
+            sleep(0.4)
 
         self.number_of_humans = len(self.grid.human_coordinates)
         self.number_of_zombies = len(self.grid.zombie_coordinates)

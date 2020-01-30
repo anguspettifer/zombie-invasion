@@ -1,6 +1,7 @@
 import time
 
 from mock import patch, Mock, call
+import pandas as pd
 
 from zombie_invasion.game import Game
 from zombie_invasion.human import Human
@@ -117,3 +118,22 @@ def test_game_start_calls_human_move_until_there_are_no_humans(mock_input):
     assert len(game.grid.human_coordinates) == 0
     assert len(game.grid.zombie_coordinates) == 8
     # mock_print.assert_called_with("Game over")
+
+
+@patch('zombie_invasion.game.print')
+def test_display_initial_display(mock_print):
+    """
+    Create a game object with grid dimensions
+    Expect a prompt to move screen size to the right size
+    """
+    width = 3
+    length = 3
+
+    game = Game()
+    game.grid = Mock(width=width, length=length)
+
+    empty_row = ["." for i in range(width + 1)]
+    df = pd.DataFrame(data=[empty_row for i in range(length + 1)])
+
+    game.initial_display()
+    mock_print.assert_called_with(f"Please adjust screen to the size of the below grid:\n{df}")

@@ -14,10 +14,13 @@ def test_game_request_dimensions(mock_input, mock_print):
     """
     Check that requesting the user for dimensions as an input saves response
     """
-    mock_input.return_value = (20, 40)
+    mock_input.side_effect = [20, 40]
     game = Game()
     game._request_dimensions()
-    mock_print.assert_called_with("Please enter dimensions")
+    mock_print.assert_has_calls([
+        call("Please enter width"),
+        call("Please enter length")
+    ])
     assert game.dimensions == (20, 40)
 
 
@@ -78,11 +81,25 @@ def test_game_set_up_creates_grid(mock_input, mock_print):
     """
     set up game creates a grid with dimensions
     """
-    mock_input.side_effect = [(4, 3), 5, 3]
+    mock_input.side_effect = [4, 3, 5, 3]
     game = Game()
     game.set_up()
     assert game.grid.width == 3
     assert game.grid.length == 2
+
+@patch('zombie_invasion.game.print')
+@patch('zombie_invasion.game.input')
+def test_game_set_up_creates_grid(mock_input, mock_print):
+    """
+    Bug fix dimensions as strings
+    """
+    mock_input.side_effect = ["4", "3", "5", "3"]
+    game = Game()
+    game.set_up()
+    assert game.grid.width == 3
+    assert game.grid.length == 2
+    assert len(game.grid.zombie_coordinates) == 3
+    assert len(game.grid.human_coordinates) == 5
 
 
 @patch('zombie_invasion.game.print')
@@ -91,7 +108,7 @@ def test_game_set_up_adds_humans_and_zombies(mock_input, mock_print):
     """
     set up game creates a grid with dimensions
     """
-    mock_input.side_effect = [(4, 3), 5, 3]
+    mock_input.side_effect = [4, 3, 5, 3]
     game = Game()
     game.set_up()
 
@@ -108,7 +125,7 @@ def test_game_start_calls_human_move_until_there_are_no_humans(mock_input):
     Start the game
     Assert that when there are no zombies, game.end is called
     """
-    mock_input.side_effect = [(4, 3), 5, 3]
+    mock_input.side_effect = [4, 3, 5, 3]
     game = Game()
     game.set_up()
 
@@ -137,3 +154,4 @@ def test_display_initial_display(mock_print):
 
     game.initial_display()
     mock_print.assert_called_with(f"Please adjust screen to the size of the below grid:\n{df}")
+

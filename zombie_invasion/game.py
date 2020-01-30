@@ -17,16 +17,19 @@ class Game:
         self.grid = None
 
     def _request_dimensions(self):
-        print("Please enter dimensions")
-        self.dimensions = input()
+        print("Please enter width")
+        width = int(input())
+        print("Please enter length")
+        length = int(input())
+        self.dimensions = (width, length)
 
     def _request_number_of_humans(self):
         print("Please enter number of humans")
-        self.number_of_humans = input()
+        self.number_of_humans = int(input())
 
     def _request_number_of_zombies(self):
         print("Please enter number of zombies")
-        self.number_of_zombies = input()
+        self.number_of_zombies = int(input())
 
     def _add_players(self, player_class, number_of_players):
         for i in range(number_of_players):

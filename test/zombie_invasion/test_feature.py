@@ -182,11 +182,12 @@ def test_game_inputs(mock_input, mock_print):
     #     - dimensions
     #     - number of humans
     #     - number of zombies
-    mock_input.side_effect = [(4, 3), 5, 3]
+    mock_input.side_effect = [4, 3, 5, 3]
     game = Game()
     game.set_up()
     mock_print.assert_has_calls([
-        call("Please enter dimensions"),
+        call("Please enter width"),
+        call("Please enter length"),
         call("Please enter number of humans"),
         call("Please enter number of zombies")])
 
@@ -195,7 +196,7 @@ def test_game_plays(mock_input):
     # Given I have triggered the start of the game
     # Once I have input the paramaters
     # Then the game will play out on my screen
-    mock_input.side_effect = [(10, 10), 5, 3]
+    mock_input.side_effect = [10, 10, 5, 3]
     game = Game()
     game.set_up()
     game.start()

@@ -87,6 +87,7 @@ def test_game_set_up_creates_grid(mock_input, mock_print):
     assert game.grid.width == 3
     assert game.grid.length == 2
 
+
 @patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
 def test_game_set_up_creates_grid(mock_input, mock_print):
@@ -143,12 +144,10 @@ def test_game_keeps_track_of_number_of_turns(mock_input, mock_print):
     Start the game
     Assert that at the end of the game the number of turns is 3
     """
-    # TODO: This is a terrible test which probably shows a breach of srp.
     mock_input.side_effect = [1, 1, 7, 1]
     game = Game()
     game.set_up()
 
-    assert game.number_of_turns == 0
     game.start()
 
     assert game.number_of_turns == 3

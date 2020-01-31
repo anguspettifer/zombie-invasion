@@ -22,3 +22,14 @@ class Display:
     def render(self):
         df = self.create_empty_df()
         return self._add_objects(df)
+
+    def initial_display(self):
+        print(f"Please adjust screen to the size of the below grid:\n{self.create_empty_df()}\nplease hit enter")
+        input()
+
+    def game_display(self, number_of_humans, number_of_zombies):
+        print(f"Human count: {number_of_humans} \nZombie count: {number_of_zombies} \n {self.render()}")
+
+    def end_game_display(self, number_of_humans, number_of_zombies, number_of_turns):
+        print(f"Human count: {number_of_humans}\nZombie count: {number_of_zombies}\n{self.render()}\n"
+              f"Number of turns: {number_of_turns}\nHumans extinct!")

@@ -24,13 +24,11 @@ class Grid:
         self.player_map[player.render][player] = coordinates
 
     def humans_move(self):
-        print("Human move")
         #TODO: These 2 method could maybe be combined? and game is responsible for knowing the arguments
         for human, coordinates in self.human_coordinates.items():
             self.human_coordinates[human] = human.move(coordinates, [self.width, self.length])
 
     def zombies_move(self):
-        print("Zombie move")
         for zombie, coordinates in self.zombie_coordinates.items():
             self.zombie_coordinates[zombie] = zombie.move(coordinates, self.human_coordinates)
 

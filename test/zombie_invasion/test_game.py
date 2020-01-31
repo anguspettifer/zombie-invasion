@@ -123,7 +123,7 @@ def test_game_start_calls_human_move_until_there_are_no_humans(mock_input):
     """
     Create a game with 1 human and 1 zombie
     Start the game
-    Assert that when there are no zombies, game.end is called
+    Assert that at the end of the game there are 2 zombies and no humans
     """
     mock_input.side_effect = [4, 3, 1, 1]
     game = Game()
@@ -132,40 +132,37 @@ def test_game_start_calls_human_move_until_there_are_no_humans(mock_input):
     game.start()
 
     assert len(game.grid.human_coordinates) == 0
-    assert len(game.grid.zombie_coordinates) == 8
+    assert len(game.grid.zombie_coordinates) == 2
 
 
 @patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
-def test_game_start_calls_keeps_track_of_number_of_turns(mock_input, mock_print):
+def test_game_keeps_track_of_number_of_turns(mock_input, mock_print):
     """
-    Create a game with 1 human and 1 zombie
+    Create a game 1x1 game with 1 zombie and 7 humans
     Start the game
-    Assert that when there are no zombies, game.end is called
+    Assert that at the end of the game the number of turns is 3
     """
-    # TODO: This is a terrible test
-    mock_input.side_effect = [2, 2, 1, 1]
+    # TODO: This is a terrible test which probably shows a breach of srp.
+    mock_input.side_effect = [1, 1, 7, 1]
     game = Game()
     game.set_up()
 
+    assert game.number_of_turns == 0
     game.start()
 
-    expected_call = call("Number of turns: 1")
-    bools = []
-    for arg in mock_print.call_args_list:
-        try:
-            bools.append(expected_call == arg)
-        except ValueError: # When arg is a dataframe
-            continue
-    assert True in bools
+    assert game.number_of_turns == 3
 
 
+@patch('zombie_invasion.game.input')
 @patch('zombie_invasion.game.print')
-def test_display_initial_display(mock_print):
+def test_display_initial_display(mock_print, mock_input):
     """
     Create a game object with grid dimensions
     Expect a prompt to move screen size to the right size
     """
+    mock_input.return_value = None
+
     width = 3
     length = 3
 
@@ -176,5 +173,5 @@ def test_display_initial_display(mock_print):
     df = pd.DataFrame(data=[empty_row for i in range(length + 1)])
 
     game.initial_display()
-    mock_print.assert_called_with(f"Please adjust screen to the size of the below grid:\n{df}")
+    mock_print.assert_called_with(f"Please adjust screen to the size of the below grid:\n{df}\nplease hit enter")
 

@@ -39,6 +39,11 @@ class Game:
             self.grid.add_player(player_class(), [x_coordinate, y_coordinate])
 
     def set_up(self):
+        """
+        Request set up information from user
+        Instantiate grid with information
+        Add players at specific coordinates
+        """
         self._request_dimensions()
         self._request_number_of_humans()
         self._request_number_of_zombies()
@@ -50,7 +55,12 @@ class Game:
     def initial_display(self):
         Display(self.grid).initial_display()
 
-    def start(self):
+    def play(self):
+        """
+        While there are humans
+        Display the grid
+        Move all the players
+        """
         while len(self.grid.human_coordinates) > 0:
             self.number_of_humans = len(self.grid.human_coordinates)
             self.number_of_zombies = len(self.grid.zombie_coordinates)

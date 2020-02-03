@@ -199,7 +199,7 @@ def test_game_plays(mock_input):
     mock_input.side_effect = [10, 10, 5, 3]
     game = Game()
     game.set_up()
-    game.start()
+    game.play()
     assert game.number_of_humans == 0
     assert game.number_of_zombies == 8
 

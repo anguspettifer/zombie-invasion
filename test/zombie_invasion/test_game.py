@@ -130,7 +130,7 @@ def test_game_start_calls_human_move_until_there_are_no_humans(mock_input):
     game = Game()
     game.set_up()
 
-    game.start()
+    game.play()
 
     assert len(game.grid.human_coordinates) == 0
     assert len(game.grid.zombie_coordinates) == 2
@@ -148,29 +148,30 @@ def test_game_keeps_track_of_number_of_turns(mock_input, mock_print):
     game = Game()
     game.set_up()
 
-    game.start()
+    game.play()
 
     assert game.number_of_turns == 3
 
 
-# @patch('zombie_invasion.game.input')
-# @patch('zombie_invasion.game.print')
-# def test_display_initial_display(mock_print, mock_input):
-#     """
-#     Create a game object with grid dimensions
-#     Expect a prompt to move screen size to the right size
-#     """
-#     mock_input.return_value = None
-#
-#     width = 3
-#     length = 3
-#
-#     game = Game()
-#     game.grid = Mock(width=width, length=length)
-#
-#     empty_row = ["." for i in range(width + 1)]
-#     df = pd.DataFrame(data=[empty_row for i in range(length + 1)])
-#
-#     game.initial_display()
-#     mock_print.assert_called_with(f"Please adjust screen to the size of the below grid:\n{df}\nplease hit enter")
-# TODO: this test fails due to an incorrectly mocked input
+@patch('zombie_invasion.display.input')
+@patch('zombie_invasion.display.print')
+def test_display_initial_display(mock_print, mock_input):
+    """
+    Create a game object with grid dimensions
+    Expect initial_display to be called on the display object
+    """
+    # TODO: Question for Andy, what is a sensible way to test this method? This test is essentially replicated
+
+    mock_input.return_value = None
+
+    width = 3
+    length = 3
+
+    game = Game()
+    game.grid = Mock(width=width, length=length)
+
+    empty_row = ["." for i in range(width + 1)]
+    df = pd.DataFrame(data=[empty_row for i in range(length + 1)])
+
+    game.initial_display()
+    mock_print.assert_called_with(f"Please adjust screen to the size of the below grid:\n{df}\nplease hit enter")

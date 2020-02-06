@@ -21,7 +21,7 @@ class Grid:
         """
         Adds a player to the dictionary of the player type, along with the starting coordinates
         """
-        if coordinates[0] > (self.width) or coordinates[1] > (self.length):
+        if coordinates[0] > self.width or coordinates[1] > self.length:
             raise ValueError
         self.player_map[player.render][player] = coordinates
         try:
@@ -39,6 +39,7 @@ class Grid:
     def zombies_move(self):
         for zombie, coordinates in self.zombie_coordinates.items():
             self.zombie_coordinates[zombie] = zombie.move(coordinates, self.human_coordinates)
+        # TODO: convert if needed should be called here
 
     @staticmethod
     def _get_unique(iterable):

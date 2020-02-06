@@ -32,26 +32,29 @@ class Game:
         print("Please enter number of zombies")
         self.number_of_zombies = int(input())
 
-    def _add_humans(self, player_class, number_of_players):
+    def _add_humans(self, human_class=Human):  # Dependency injection to ease testing
         """
         Randomly choose any x and y coordinates in the grid
         Add a new human on that square
         """
-        for i in range(number_of_players):
+        for i in range(self.number_of_humans):
             x_coordinate = random.randint(0, self.grid.width)
             y_coordinate = random.randint(0, self.grid.length)
-            self.grid.add_player(player_class(), [x_coordinate, y_coordinate])
+            self.grid.add_player(human_class(), [x_coordinate, y_coordinate])
 
-    def _add_zombies(self, number_of_players):
+    def _add_zombies(self, zombie_class=Zombie):  # Dependency injection to ease testing
         """
         Randomly choose any unoccupied coordinates from the grid
         Add a new zombie to that square
         """
-        for i in range(number_of_players):
-            coordinates = random.choice(self.grid.unoccupied_coordinates)
-            self.grid.add_player(Zombie(), coordinates)
+        for i in range(self.number_of_zombies):
+            try:
+                coordinates = random.choice(self.grid.unoccupied_coordinates)
+                self.grid.add_player(zombie_class(), coordinates)
+            except IndexError: # No spaces left for zombies
+                print(f"You have reached your zombie limit, {len(self.grid.zombie_coordinates)} zombies added")
 
-    def set_up(self):
+    def set_up(self, grid_class=Grid):  # Dependency injection to ease testing
         """
         Request set up information from user
         Instantiate grid with information
@@ -61,30 +64,28 @@ class Game:
         self._request_number_of_humans()
         self._request_number_of_zombies()
 
-        self.grid = Grid(self.dimensions)
-        self._add_humans(Human, self.number_of_humans)
-        self._add_humans(Zombie, self.number_of_zombies)
+        self.grid = grid_class(self.dimensions)
+        self._add_humans()
+        self._add_zombies()
 
     def initial_display(self):
         Display(self.grid).initial_display()
 
-    def play(self):
+    def play(self, display_class=Display):
         """
         While there are humans
         Display the grid
         Move all the players
         """
-        while len(self.grid.human_coordinates) > 0:
-            self.number_of_humans = len(self.grid.human_coordinates)
-            self.number_of_zombies = len(self.grid.zombie_coordinates)
+        while self.number_of_humans > 0:
             Display(self.grid).game_display(self.number_of_humans, self.number_of_zombies)
             self.grid.humans_move()
             self.grid.zombies_move()
             self.grid.convert_if_needed()
+            self.number_of_humans = len(self.grid.human_coordinates)
+            self.number_of_zombies = len(self.grid.zombie_coordinates)
             self.number_of_turns += 1
             sleep(0.4)
 
-        self.number_of_humans = len(self.grid.human_coordinates)
-        self.number_of_zombies = len(self.grid.zombie_coordinates)
-        Display(self.grid).end_game_display(self.number_of_humans, self.number_of_humans, self.number_of_turns)
+        display_class(self.grid).end_game_display(self.number_of_humans, self.number_of_zombies, self.number_of_turns)
 

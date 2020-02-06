@@ -9,6 +9,17 @@ from zombie_invasion.human import Human
 from zombie_invasion.zombie import Zombie
 
 
+def set_up_game_with(mock_input, mock_print, dimensions=[4, 3], number_of_humans=5, number_of_zombies=3, grid_class=False):
+    # Create helper function to decouple tests
+    mock_input.side_effect = [dimensions[0], dimensions[1], number_of_humans, number_of_zombies]
+    game = Game()
+    if grid_class:
+        game.set_up(grid_class)
+    else:
+        game.set_up()
+    return game
+
+
 @patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
 def test_game_request_dimensions(mock_input, mock_print):
@@ -64,7 +75,7 @@ def test_add_humans(mock_random):
     game.grid = Mock(add_player=Mock())
     mock_human = Mock(side_effect=["h1", "h2", "h3", "h4", "h5"])
 
-    game._add_humans(mock_human, game.number_of_humans)
+    game._add_humans(mock_human)
 
     game.grid.add_player.assert_has_calls([
         call("h1", [1, 1]),
@@ -90,7 +101,7 @@ def test_add_zombie(mock_random):
     grid = Mock(add_player=Mock(), unoccupied_coordinates=None)
     game.grid = grid
 
-    game._add_zombies(game.number_of_zombies)
+    game._add_zombies()
 
     assert grid.add_player.call_count == 2
 
@@ -104,9 +115,7 @@ def test_game_set_up_creates_grid(mock_input, mock_print):
     """
     set up game creates a grid with dimensions
     """
-    mock_input.side_effect = [4, 3, 5, 3]
-    game = Game()
-    game.set_up()
+    game = set_up_game_with(mock_input, mock_print)
     assert game.grid.width == 3
     assert game.grid.length == 2
 
@@ -117,9 +126,10 @@ def test_game_set_up_creates_grid(mock_input, mock_print):
     """
     Bug fix dimensions as strings
     """
-    mock_input.side_effect = ["4", "3", "5", "3"]
-    game = Game()
-    game.set_up()
+    dimensions = ["4", "3"]
+    number_of_humans = "5"
+    number_of_zombies = "3"
+    game = set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies)
     assert game.grid.width == 3
     assert game.grid.length == 2
     assert len(game.grid.zombie_coordinates) == 3
@@ -128,13 +138,35 @@ def test_game_set_up_creates_grid(mock_input, mock_print):
 
 @patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
+@patch('zombie_invasion.game.random')
+def test_game_set_up_creates_grid(mock_random, mock_input, mock_print):
+    """
+    Bug fix.
+    Create game with 2 zombies and no humans
+    assert that 2 zombies are added
+    """
+    mock_random.choice.side_effect = [[1, 1], [2, 2]]
+
+    dimensions = ["4", "3"]
+    number_of_humans = "0"
+    number_of_zombies = "2"
+
+    mock_grid_class = Mock()
+    mock_grid = Mock(add_player=Mock(), unoccupied_coordinates=None)
+    mock_grid_class.return_value = mock_grid
+
+    set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies, mock_grid_class)
+
+    assert mock_grid.add_player.call_count == 2
+
+
+@patch('zombie_invasion.game.print')
+@patch('zombie_invasion.game.input')
 def test_game_set_up_adds_humans_and_zombies(mock_input, mock_print):
     """
     set up game creates a grid with dimensions
     """
-    mock_input.side_effect = [4, 3, 5, 3]
-    game = Game()
-    game.set_up()
+    game = set_up_game_with(mock_input, mock_print)
 
     humans = game.grid.human_coordinates.keys()
     assert all(isinstance(x, Human) for x in humans)
@@ -143,38 +175,86 @@ def test_game_set_up_adds_humans_and_zombies(mock_input, mock_print):
     assert all(isinstance(x, Zombie) for x in zombies)
 
 
+@patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
-def test_game_start_calls_human_move_until_there_are_no_humans(mock_input):
+def test_game_start_calls_human_move_until_there_are_no_humans(mock_input, mock_print):
     """
     Create a game with 1 human and 1 zombie
     Start the game
     Assert that at the end of the game there are 2 zombies and no humans
     """
-    mock_input.side_effect = [4, 3, 1, 1]
-    game = Game()
-    game.set_up()
+
+    dimensions = [2, 2]
+    number_of_humans = 1
+    number_of_zombies = 1
+
+    game = set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies)
 
     game.play()
 
-    assert len(game.grid.human_coordinates) == 0
-    assert len(game.grid.zombie_coordinates) == 2
+    assert game.number_of_humans == 0
+    assert game.number_of_zombies == 2
+
+
+@patch('zombie_invasion.game.print')
+@patch('zombie_invasion.game.input')
+def test_game_start_calls_human_move_until_there_are_no_humans(mock_input, mock_print):
+    """
+    Bug fix: Assert that end of game display is called with remaining number of humans and zombies
+    """
+
+    dimensions = [2, 2]
+    number_of_humans = 0
+    number_of_zombies = 1
+
+    game = set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies)
+
+    mock_display = Mock(end_game_display=Mock())
+    mock_display_class = Mock(return_value=mock_display)
+    game.play(mock_display_class)
+
+    mock_display.end_game_display.assert_called_with(
+        number_of_humans, number_of_zombies, 0
+    )
+
+
+@patch('zombie_invasion.game.print')
+@patch('zombie_invasion.game.input')
+def test_game_errors_if_there_is_not_enough_room_for_all_zombies(mock_input, mock_print):
+    """
+    Create a game 2 x 2 game
+    Attempt to add 5 zombies
+    Expect standard out to print error and print the actual number of zombies added
+    Expect number of zombies to be 4
+    """
+
+    dimensions = [2, 2]
+    number_of_humans = 0
+    number_of_zombies = 5
+
+    game = set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies)
+
+    mock_print.assert_any_call(f"You have reached your zombie limit, 4 zombies added")
+    assert len(game.grid.zombie_coordinates) == 4
 
 
 @patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
 def test_game_keeps_track_of_number_of_turns(mock_input, mock_print):
     """
-    Create a game 1x1 game with 1 zombie and 7 humans
+    Create a game 2x2 game with 1 zombie and 3 humans
     Start the game
-    Assert that at the end of the game the number of turns is 3
+    Assert that at the end of the game the number of turns is 2
     """
-    mock_input.side_effect = [1, 1, 7, 1]
-    game = Game()
-    game.set_up()
+    dimensions = [2, 2]
+    number_of_humans = 2
+    number_of_zombies = 1
+
+    game = set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies)
 
     game.play()
 
-    assert game.number_of_turns == 3
+    assert game.number_of_turns == 2
 
 
 @patch('zombie_invasion.display.input')

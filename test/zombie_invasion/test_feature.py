@@ -1,5 +1,4 @@
 import pandas as pd
-import time
 from mock import patch, call
 from pandas.util.testing import assert_frame_equal
 
@@ -14,6 +13,7 @@ As a viewer
 I can watch a human and zombie on the playing grid
 So that I can be amused
 """
+
 
 def test_grid_renders():
     # Given the means to start the program
@@ -32,7 +32,6 @@ def test_grid_renders_with_human():
     # Given the means to start the program
     # When the user initiates the start
     # Then a human is occupying a single square
-
     human = Human()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [0, 0])
@@ -191,6 +190,7 @@ def test_game_inputs(mock_input, mock_print):
         call("Please enter number of humans"),
         call("Please enter number of zombies")])
 
+
 @patch('zombie_invasion.game.input')
 def test_game_plays(mock_input):
     # Given I have triggered the start of the game
@@ -202,6 +202,3 @@ def test_game_plays(mock_input):
     game.play()
     assert game.number_of_humans == 0
     assert game.number_of_zombies == 8
-
-
-# 3 Zombies will be randomly placed in the grid (In red) but will not occupy a square that is already occupied by a Human or Zombie.

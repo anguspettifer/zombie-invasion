@@ -4,6 +4,7 @@ from mock import patch, Mock, call
 import pandas as pd
 
 from zombie_invasion.game import Game
+from zombie_invasion.grid import Grid
 from zombie_invasion.human import Human
 from zombie_invasion.zombie import Zombie
 
@@ -51,7 +52,7 @@ def test_game_request_number_of_zombies(mock_input, mock_print):
 
 
 @patch('zombie_invasion.game.random')
-def test_add_players(mock_random):
+def test_add_humans(mock_random):
     """
     Set the number of humans that should be in the game
     Assert this this number are indeed added
@@ -63,7 +64,7 @@ def test_add_players(mock_random):
     game.grid = Mock(add_player=Mock())
     mock_human = Mock(side_effect=["h1", "h2", "h3", "h4", "h5"])
 
-    game._add_players(mock_human, game.number_of_humans)
+    game._add_humans(mock_human, game.number_of_humans)
 
     game.grid.add_player.assert_has_calls([
         call("h1", [1, 1]),
@@ -72,6 +73,28 @@ def test_add_players(mock_random):
         call("h4", [4, 4]),
         call("h5", [5, 5])
     ])
+
+
+@patch('zombie_invasion.game.random')
+def test_add_zombie(mock_random):
+    #TODO: ask andy. Should I be testing the inability to add two zombies to the same square here?
+    """
+    Add two zombies to the grid
+    Assert that add_player is called twice
+    """
+    mock_random.choice.side_effect = [1, 1, 2, 2]
+
+    game = Game()
+    game.number_of_zombies = 2
+
+    grid = Mock(add_player=Mock(), unoccupied_coordinates=None)
+    game.grid = grid
+
+    game._add_zombies(game.number_of_zombies)
+
+    assert grid.add_player.call_count == 2
+
+
 
 ## are these feature tests?
 
@@ -118,6 +141,7 @@ def test_game_set_up_adds_humans_and_zombies(mock_input, mock_print):
 
     zombies = game.grid.zombie_coordinates.keys()
     assert all(isinstance(x, Zombie) for x in zombies)
+
 
 @patch('zombie_invasion.game.input')
 def test_game_start_calls_human_move_until_there_are_no_humans(mock_input):

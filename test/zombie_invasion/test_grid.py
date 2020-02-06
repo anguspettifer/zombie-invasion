@@ -138,3 +138,31 @@ def test_convert_if_needed_nothing_to_convert():
     assert len(grid.zombie_coordinates) == 4
 
 
+def test_add_player_removes_coordinates_from_blank_square_coordinates():
+    """
+    Create a grid 4 x 4
+    Add a zombie at 0, 0
+    Add a human at 0, 1
+    Assert both have been removed from blank_square_coordinates
+    Assert total number of blank squares has been reduced by 2
+    """
+    grid = Grid([4, 4])
+    grid.add_player(Mock(render="H"), [0, 0])
+    grid.add_player(Mock(render="Z"), [0, 1])
+    assert [0, 0] not in grid.unoccupied_coordinates
+    assert [0, 1] not in grid.unoccupied_coordinates
+    assert len(grid.unoccupied_coordinates) == 14
+
+
+def test_add_player_adds_two_humans_to_same_square():
+    """
+    Bug fix - code should not error in this scenario
+    Create 4x4 grid
+    Add 2 humans on the same square [0, 0]
+    Assert that unoccupied_coordinates does not include [0, 0]
+    """
+    grid = Grid([4, 4])
+    grid.add_player(Mock(render="H"), [0, 0])
+    grid.add_player(Mock(render="H"), [0, 0])
+    assert [0, 0] not in grid.unoccupied_coordinates
+

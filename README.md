@@ -22,6 +22,10 @@ Then a zombie is occupying a single square*
 When the user initiates the start  
 Then the human and zombie are on different squares*
 
+*Given the game set up is in process
+When an additional zombie is added
+Then it will occupy a new empty square*
+
 **As a viewer
 I can watch a human move in a random
 So that I can be amused**
@@ -64,6 +68,7 @@ Then I will be asked for:
 * Given I have triggered the start of the game 
 When I input the paramaters
 Then the game will play out on my screen
+
 
 
 ## Considerations:

@@ -11,6 +11,7 @@ class Grid:
         self.length = size[1] - 1
         self.human_coordinates = {}
         self.zombie_coordinates = {}
+        self.unoccupied_coordinates = [[x, y] for x in range(size[0]) for y in range(size[1])]  # Lack of single source of truth??
         self.player_map = {
             'H': self.human_coordinates,
             'Z': self.zombie_coordinates
@@ -23,6 +24,12 @@ class Grid:
         if coordinates[0] > (self.width) or coordinates[1] > (self.length):
             raise ValueError
         self.player_map[player.render][player] = coordinates
+        try:
+            self.unoccupied_coordinates.remove(coordinates)
+        except ValueError:
+            # It's ok to add two players on the same square
+            # I'm not explicitly allowing humans as grid is not responsible for the rules of the game
+            pass
 
     def humans_move(self):
         #TODO: These 2 method could maybe be combined? and game is responsible for knowing the arguments

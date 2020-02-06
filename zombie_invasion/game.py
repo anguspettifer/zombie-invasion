@@ -32,11 +32,24 @@ class Game:
         print("Please enter number of zombies")
         self.number_of_zombies = int(input())
 
-    def _add_players(self, player_class, number_of_players):
+    def _add_humans(self, player_class, number_of_players):
+        """
+        Randomly choose any x and y coordinates in the grid
+        Add a new human on that square
+        """
         for i in range(number_of_players):
             x_coordinate = random.randint(0, self.grid.width)
             y_coordinate = random.randint(0, self.grid.length)
             self.grid.add_player(player_class(), [x_coordinate, y_coordinate])
+
+    def _add_zombies(self, number_of_players):
+        """
+        Randomly choose any unoccupied coordinates from the grid
+        Add a new zombie to that square
+        """
+        for i in range(number_of_players):
+            coordinates = random.choice(self.grid.unoccupied_coordinates)
+            self.grid.add_player(Zombie(), coordinates)
 
     def set_up(self):
         """
@@ -49,8 +62,8 @@ class Game:
         self._request_number_of_zombies()
 
         self.grid = Grid(self.dimensions)
-        self._add_players(Human, self.number_of_humans)
-        self._add_players(Zombie, self.number_of_zombies)
+        self._add_humans(Human, self.number_of_humans)
+        self._add_humans(Zombie, self.number_of_zombies)
 
     def initial_display(self):
         Display(self.grid).initial_display()

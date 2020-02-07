@@ -58,7 +58,7 @@ class Game:
                 coordinates = random.choice(self.grid.unoccupied_coordinates)
                 self.grid.add_player(zombie_class(), coordinates)
             except IndexError: # No spaces left for zombies
-                self.number_of_zombies = len([x for x in self.grid.players_and_coordinates.keys() if type(x) == Zombie])
+                self._update_number_of_players()
                 print(f"You have reached your zombie limit, {self.number_of_zombies} zombies added")
 
     def _update_number_of_players(self):
@@ -83,7 +83,7 @@ class Game:
     def initial_display(self):
         Display(self.grid).initial_display()
 
-    def play(self, display_class=Display):
+    def play(self, display_class=Display):  # Dependency injection to ease testing
         """
         While there are humans
         Display the grid

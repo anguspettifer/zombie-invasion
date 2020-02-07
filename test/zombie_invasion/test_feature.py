@@ -212,3 +212,39 @@ def test_game_plays(mock_input):
     game.play()
     assert game.number_of_humans == 0
     assert game.number_of_zombies == 8
+
+
+"""
+As a viewer
+I can set the speed of a human
+So that I can give them a fighting chance
+"""
+
+@patch("zombie_invasion.game.random")
+@patch('zombie_invasion.game.input')
+def test_game_implements_human_speed(mock_input, mock_random):
+    # Given a program is starting
+    # When I set the speed of a human
+    # Then all humans will move at this speed
+
+    """
+    Set up game with 10 x 10 grid one human in position 5, 5 and no zombies
+    Set their speed to 3
+    Check that after 1 go their position will be 3 squares away in any direction
+    """
+    mock_random.randint.return_value = 5
+    mock_input.side_effect = [10, 10, 1, 0, 3]
+    game = Game()
+    game.set_up()
+    game.grid.players_move()
+    new_coords = list(game.grid.players_and_coordinates.values())[0]
+
+    diff_in_x_coords = abs(new_coords[0] - 5)
+    diff_in_y_coords = abs(new_coords[1] - 5)
+
+    # Human has either moved 3 in x direction, or 3 in y direction, or both
+    # But Human has not stayed still
+
+    assert diff_in_x_coords in [0, 3]
+    assert diff_in_y_coords in [0, 3]
+    assert [diff_in_x_coords, diff_in_y_coords] != [0, 0]

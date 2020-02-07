@@ -39,6 +39,14 @@ When a human moves into a wall
 Then the human will not move on that go*
 
 **As a viewer
+I can set the speed of a human
+So that I can give them a fighting chance**
+
+*Given a program is starting
+When I set the speed of a human
+Then all humans will move at this speed*
+
+**As a viewer
 I can watch a zombie move towards the human
 So that my desire for human demolition by zombies can be incited**
 
@@ -68,6 +76,7 @@ Then I will be asked for:
 * Given I have triggered the start of the game 
 When I input the paramaters
 Then the game will play out on my screen
+
 
 
 

@@ -37,3 +37,21 @@ def test_human_cannot_move_through_grid_wall(mock_random):
 
     new_coordinates = human.move(coordinates, dimensions)
     assert new_coordinates == [0, 0]
+
+
+@patch("zombie_invasion.human.random")
+def test_human_moves_number_of_squares_according_to_speed(mock_random):
+    """
+    Instansiate a human with a speed = 3
+    Give it coordinates of 0, 0 in a grid of 3 x 3
+    Mock random so that the human will move to the right along the x axis
+    Call move
+    Assert that the human is at 3, 0
+    """
+    mock_random.randint.return_value = 6
+    human = Human(speed=3)
+    coordinates = [0, 0]
+    grid_dimensions = [3, 3]
+    assert human.move(coordinates, grid_dimensions) == [3, 0]
+
+

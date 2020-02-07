@@ -301,3 +301,17 @@ def test_game_records_number_of_players(mock_input, mock_print):
 
     assert game.number_of_zombies == 2
     assert game.number_of_humans == 0
+
+
+@patch('zombie_invasion.game.print')
+@patch('zombie_invasion.game.input')
+def test_game_request_human_speed(mock_input, mock_print):
+    """
+    Mock input value
+    Call request_human_speed
+    Assert that human_speed has been set
+    """
+    mock_input.return_value = 3
+    game = Game()
+    game._request_human_speed()
+    assert game.human_speed == 3

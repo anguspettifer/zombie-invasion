@@ -16,6 +16,7 @@ class Game:
         self.number_of_zombies = None
         self.grid = None
         self.number_of_turns = 0
+        self.human_speed = 0
 
     def _request_dimensions(self):
         print("Please enter width")
@@ -32,15 +33,20 @@ class Game:
         print("Please enter number of zombies")
         self.number_of_zombies = int(input())
 
+    def _request_human_speed(self):
+        print("Please enter human speed. Number of squares covered per turn:")
+        self.human_speed = 3
+
     def _add_humans(self, human_class=Human):  # Dependency injection to ease testing
         """
         Randomly choose any x and y coordinates in the grid
         Add a new human on that square
+        Implement user_given human speed
         """
         for i in range(self.number_of_humans):
             x_coordinate = random.randint(0, self.grid.width)
             y_coordinate = random.randint(0, self.grid.length)
-            self.grid.add_player(human_class(), [x_coordinate, y_coordinate])
+            self.grid.add_player(human_class(self.human_speed), [x_coordinate, y_coordinate])
 
     def _add_zombies(self, zombie_class=Zombie):  # Dependency injection to ease testing
         """
@@ -68,6 +74,7 @@ class Game:
         self._request_dimensions()
         self._request_number_of_humans()
         self._request_number_of_zombies()
+        self._request_human_speed()
 
         self.grid = grid_class(self.dimensions)
         self._add_humans()

@@ -1,6 +1,5 @@
 class Conversion:
     """ Knows how to convert source object to destination based on matching criteria """
-    #TODO: Have I broken Conversion?
     def __init__(self, source_items, destination_items, source_object, destination_object):
         self.source_items = source_items
         self.destination_items = destination_items

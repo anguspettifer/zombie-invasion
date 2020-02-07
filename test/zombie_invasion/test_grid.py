@@ -169,3 +169,15 @@ def test_add_player_adds_two_humans_to_same_square():
     grid.add_player(Mock(render="H"), [0, 0])
     assert [0, 0] not in grid.unoccupied_coordinates
 
+
+def test_unoccupied_coordinates_not_settable():
+    """
+    In order to maintain a single source of truth
+        unoccupied_coordinates can only be changed when the players_and_coordinates is changed
+    Set up grid
+    Change the unnocupied_coordinates attribute
+    Assert an error is raised
+    """
+    grid = Grid([4, 4])
+    with pytest.raises(AttributeError):
+        grid.unoccupied_coordinates = [1, 1]

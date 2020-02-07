@@ -12,7 +12,14 @@ class Grid:
         self.width = size[0] - 1
         self.length = size[1] - 1
         self.players_and_coordinates = {}
-        self.unoccupied_coordinates = [[x, y] for x in range(size[0]) for y in range(size[1])]  # Lack of single source of truth??
+        self.__unoccupied_coordinates = [[x, y] for x in range(size[0]) for y in range(size[1])]  # Lack of single source of truth??
+
+    @property
+    def unoccupied_coordinates(self):
+        """
+        Expose attribute as property but do not expose setter method in order to preserve data integrity
+        """
+        return self.__unoccupied_coordinates
 
     def add_player(self, player, coordinates):
         """
@@ -35,14 +42,6 @@ class Grid:
                 grid_dimensions=[self.width, self.length],
                 players_and_coordinates=copy(self.players_and_coordinates)
             )
-
-    @staticmethod
-    def _get_unique(iterable):
-        result = []
-        for item in iterable:
-            if item not in result:
-                result.append(item)
-        return result
 
     def convert_if_needed(self):
         """

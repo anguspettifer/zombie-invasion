@@ -35,7 +35,7 @@ class Game:
 
     def _request_human_speed(self):
         print("Please enter human speed. Number of squares covered per turn:")
-        self.human_speed = 3
+        self.human_speed = int(input())
 
     def _add_humans(self, human_class=Human):  # Dependency injection to ease testing
         """

@@ -9,9 +9,10 @@ from zombie_invasion.human import Human
 from zombie_invasion.zombie import Zombie
 
 
-def set_up_game_with(mock_input, mock_print, dimensions=[4, 3], number_of_humans=5, number_of_zombies=3, grid_class=False):
+def set_up_game_with(mock_input, mock_print, dimensions=[4, 3], number_of_humans=5, number_of_zombies=3,
+                     human_speed=1, grid_class=False):
     # Create helper function to decouple tests
-    mock_input.side_effect = [dimensions[0], dimensions[1], number_of_humans, number_of_zombies]
+    mock_input.side_effect = [dimensions[0], dimensions[1], number_of_humans, number_of_zombies, human_speed]
     game = Game()
     if grid_class:
         game.set_up(grid_class)
@@ -150,12 +151,13 @@ def test_game_set_up_creates_grid(mock_random, mock_input, mock_print):
     dimensions = ["4", "3"]
     number_of_humans = "0"
     number_of_zombies = "2"
+    human_speed = "3"
 
     mock_grid_class = Mock()
     mock_grid = Mock(add_player=Mock(), unoccupied_coordinates=None)
     mock_grid_class.return_value = mock_grid
 
-    set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies, mock_grid_class)
+    set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies, human_speed, mock_grid_class)
 
     assert mock_grid.add_player.call_count == 2
 

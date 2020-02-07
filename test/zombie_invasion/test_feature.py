@@ -182,6 +182,10 @@ So that I can watch the mayhem unfold
 """
 
 
+def mock_inputs(mock_input, width=10, length=10, humans=5, zombies=3, speed=1):
+    mock_input.side_effect = [width, length, humans, zombies, speed]
+
+
 @patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
 def test_game_inputs(mock_input, mock_print):
@@ -191,7 +195,7 @@ def test_game_inputs(mock_input, mock_print):
     #     - dimensions
     #     - number of humans
     #     - number of zombies
-    mock_input.side_effect = [4, 3, 5, 3]
+    mock_inputs(mock_input)
     game = Game()
     game.set_up()
     mock_print.assert_has_calls([
@@ -206,7 +210,7 @@ def test_game_plays(mock_input):
     # Given I have triggered the start of the game
     # Once I have input the paramaters
     # Then the game will play out on my screen
-    mock_input.side_effect = [10, 10, 5, 3]
+    mock_inputs(mock_input, 3, 3)
     game = Game()
     game.set_up()
     game.play()
@@ -233,7 +237,8 @@ def test_game_implements_human_speed(mock_input, mock_random):
     Check that after 1 go their position will be 3 squares away in any direction
     """
     mock_random.randint.return_value = 5
-    mock_input.side_effect = [10, 10, 1, 0, 3]
+    mock_inputs(mock_input, 10, 10, 1, 0, 3)
+
     game = Game()
     game.set_up()
     game.grid.players_move()

@@ -52,7 +52,7 @@ class Zombie:
 
         Args:
             zombie_coordinates: a list of x-coordinate and y-coordinate of the zombie
-            human_coordinates: a list of dictionaries of all human objects and their x and y coordinates
+            players_and_coordinates: a list of dictionaries of all players and their x and y coordinates
 
         Returns:
             A list of new x and y coordinates

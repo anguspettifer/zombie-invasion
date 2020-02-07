@@ -12,11 +12,10 @@ class Display:
 
     def _add_objects(self, df):
         # This method isn't dry. And it knows a lot about grid.
-        for player, human_coordinates in self.grid.human_coordinates.items():
-            df[human_coordinates[0]].loc[human_coordinates[1]] = player.render
+        # It does indeed, and that has come to bite me
+        for player, coordinates in self.grid.players_and_coordinates.items():
+            df[coordinates[0]].loc[coordinates[1]] = player.render
 
-        for player, zombie_coordinates in self.grid.zombie_coordinates.items():
-            df[zombie_coordinates[0]].loc[zombie_coordinates[1]] = player.render
         return df
 
     def render(self):

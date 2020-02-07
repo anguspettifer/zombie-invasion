@@ -1,11 +1,14 @@
 import random
 import math
 
+from zombie_invasion.human import Human
+
 
 class Zombie:
     def __init__(self):
         """
-        Once a zombie starts hunting a human, it keeps hunting it and so needs to know that attribute.
+        Once a zombie starts hunting a human, it keeps hunting it.
+        Thus it needs to remember the human it is hunting.
         Initially it is not hunting a human.
         """
         self.__hunted_human = None
@@ -21,19 +24,10 @@ class Zombie:
             return x
 
     @staticmethod
-    def _human_coordinates_and_absolute_distances(human_coordinates, zombie_coordinates):
-        human_coordinates_distance = []
-        for human, coordinates in human_coordinates.items():
-            distance = abs(zombie_coordinates[0] - coordinates[0]) + abs(zombie_coordinates[1] - coordinates[1])
-            human_coordinates_distance.append((human, coordinates, distance))
-
-        return human_coordinates_distance
-
-    @staticmethod
     def _closest_human_coordinates(zombie_coordinates, human_coordinates):
         """
         Checks the distance of all the humans from the zombie
-        Returns the coordinates of all the equidistant closest humans
+        Returns the human objects and coordinates of all the equidistant closest humans
         """
         closest_humans_and_coordinates = {}
         human_coordinates_distance = []
@@ -45,17 +39,25 @@ class Zombie:
             human_coordinates_distance.append((human, coordinates, distance))
 
         for human, coordinates, distance in human_coordinates_distance:
-            # TODO: must be a way to edit the old dict rather than create a new one
             if distance == min_distance:
                 closest_humans_and_coordinates[human] = coordinates
 
         return closest_humans_and_coordinates
 
-    def move(self, zombie_coordinates, human_coordinates):
+    def move(self, zombie_coordinates, grid_dimensions=None, players_and_coordinates=None):
         """
         A zombie moves 1 square closer to the nearest human
         If more than one human is closest it moves to one them at random
+        The hunted human will be stored in memory
+
+        Args:
+            zombie_coordinates: a list of x-coordinate and y-coordinate of the zombie
+            human_coordinates: a list of dictionaries of all human objects and their x and y coordinates
+
+        Returns:
+            A list of new x and y coordinates
         """
+        human_coordinates = {k: v for k, v in players_and_coordinates.items() if type(k) == Human}
         closest_humans_and_coordinates = self._closest_human_coordinates(zombie_coordinates, human_coordinates)
         if self.__hunted_human not in closest_humans_and_coordinates.keys():
             self.__hunted_human = random.choice(list(closest_humans_and_coordinates))

@@ -164,15 +164,13 @@ def test_game_set_up_creates_grid(mock_random, mock_input, mock_print):
 @patch('zombie_invasion.game.input')
 def test_game_set_up_adds_humans_and_zombies(mock_input, mock_print):
     """
-    set up game creates a grid with dimensions
+    Set up a game with dimensions
+    Assert that grid stores the correc dimensions
     """
     game = set_up_game_with(mock_input, mock_print)
 
-    humans = game.grid.human_coordinates.keys()
-    assert all(isinstance(x, Human) for x in humans)
-
-    zombies = game.grid.zombie_coordinates.keys()
-    assert all(isinstance(x, Zombie) for x in zombies)
+    assert game.grid.length == 2
+    assert game.grid.width == 3
 
 
 @patch('zombie_invasion.game.print')
@@ -235,7 +233,7 @@ def test_game_errors_if_there_is_not_enough_room_for_all_zombies(mock_input, moc
     game = set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies)
 
     mock_print.assert_any_call(f"You have reached your zombie limit, 4 zombies added")
-    assert len(game.grid.zombie_coordinates) == 4
+    assert game.number_of_zombies == 4
 
 
 @patch('zombie_invasion.game.print')
@@ -279,3 +277,27 @@ def test_display_initial_display(mock_print, mock_input):
 
     game.initial_display()
     mock_print.assert_called_with(f"Please adjust screen to the size of the below grid:\n{df}\nplease hit enter")
+
+
+@patch('zombie_invasion.game.print')
+@patch('zombie_invasion.game.input')
+def test_game_records_number_of_players(mock_input, mock_print):
+    """
+    Create a 2X2 game
+    Add 1 zombie and 1 human
+    Set both sets of coordinates to the same square
+    Check that the number of players is recorded after the move
+    """
+    dimensions = [2, 2]
+    number_of_humans = 1
+    number_of_zombies = 1
+
+    game = set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies)
+
+    for player in game.grid.players_and_coordinates:
+        game.grid.players_and_coordinates[player] = [1, 1]
+    game.grid.convert_if_needed()
+    game._update_number_of_players()
+
+    assert game.number_of_zombies == 2
+    assert game.number_of_humans == 0

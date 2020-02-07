@@ -8,7 +8,7 @@ class Human:
     def __init__(self):
         self.render = 'H'
 
-    def move(self, coordinates, grid_dimensions):
+    def move(self, coordinates, grid_dimensions, players_and_coordinates=None):
         """
         A human moves 1 space randomly to any adjacent space unless there is a wall
         """

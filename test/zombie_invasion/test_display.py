@@ -3,49 +3,32 @@ from mock import Mock, patch, call
 from pandas.util.testing import assert_frame_equal
 
 from zombie_invasion.display import Display
+from zombie_invasion.grid import Grid
+from zombie_invasion.human import Human
+from zombie_invasion.zombie import Zombie
 
 
-def test_display_empty_grid():
-    row = [".", ".", ".", "."]
-    expected_df = pd.DataFrame([row, row, row, row])
+def set_up_grid():
+    grid = Grid([4, 4])
+    grid.players_and_coordinates[Human()] = [0, 0]
+    grid.players_and_coordinates[Zombie()] = [1, 1]
 
-    grid = Mock(width=3, length=3, human_coordinates={}, zombie_coordinates={})
-    display = Display(grid)
+    return grid
 
-    assert_frame_equal(display.render(), expected_df)
-
-
-def test_display_human_in_grid():
-    row = [".", ".", ".", "."]
-    second_row = [".", "H", ".", "."]
-    expected_df = pd.DataFrame([row, second_row, row, row])
-
-    mock_human = Mock(render="H")
-    grid = Mock(width=3, length=3, human_coordinates={mock_human: [1, 1]}, zombie_coordinates={})
-    display = Display(grid)
-
-    assert_frame_equal(display.render(), expected_df)
+    # TODO: Ask andy. Again, we are better off instansiating a real grid rather than random mocks in order to decouple
 
 
-def test_display_zombie_in_grid():
-    row = [".", ".", ".", "."]
+def test_display_human_and_zombie_in_grid():
+    """
+    Set up display with 1 human and 1 zombie
+    Assert the expected display
+    """
+    top_row = ["H", ".", ".", "."]
     second_row = [".", "Z", ".", "."]
-    expected_df = pd.DataFrame([row, second_row, row, row])
-
-    mock_zombie = Mock(render="Z")
-    grid = Mock(width=3, length=3, human_coordinates={}, zombie_coordinates={mock_zombie: [1, 1]})
-    display = Display(grid)
-
-    assert_frame_equal(display.render(), expected_df)
-
-
-def test_display_no_humans():
     row = [".", ".", ".", "."]
-    second_row = [".", "Z", ".", "."]
-    expected_df = pd.DataFrame([row, second_row, row, row])
 
-    mock_zombie = Mock(render="Z")
-    grid = Mock(width=3, length=3, human_coordinates={}, zombie_coordinates={mock_zombie: [1, 1]})
+    expected_df = pd.DataFrame([top_row, second_row, row, row])
+    grid = set_up_grid()
     display = Display(grid)
 
     assert_frame_equal(display.render(), expected_df)
@@ -82,11 +65,7 @@ def test_display_game_display(mock_input, mock_print):
     """
     mock_input.return_value = None
 
-    width = 3
-    length = 3
-    human = Mock(render="H")
-    zombie = Mock(render="Z")
-    grid = Mock(width=width, length=length, human_coordinates={human: [1, 1]}, zombie_coordinates={zombie: [2, 1]})
+    grid = set_up_grid()
 
     display = Display(grid)
     df = display.render()
@@ -106,11 +85,7 @@ def test_end_game_display(mock_input, mock_print):
     """
     mock_input.return_value = None
 
-    width = 3
-    length = 3
-    human = Mock(render="H")
-    zombie = Mock(render="Z")
-    grid = Mock(width=width, length=length, human_coordinates={human: [1, 1]}, zombie_coordinates={zombie: [2, 1]})
+    grid = set_up_grid()
 
     display = Display(grid)
     df = display.render()

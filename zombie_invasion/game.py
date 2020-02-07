@@ -52,7 +52,12 @@ class Game:
                 coordinates = random.choice(self.grid.unoccupied_coordinates)
                 self.grid.add_player(zombie_class(), coordinates)
             except IndexError: # No spaces left for zombies
-                print(f"You have reached your zombie limit, {len(self.grid.zombie_coordinates)} zombies added")
+                self.number_of_zombies = len([x for x in self.grid.players_and_coordinates.keys() if type(x) == Zombie])
+                print(f"You have reached your zombie limit, {self.number_of_zombies} zombies added")
+
+    def _update_number_of_players(self):
+        self.number_of_zombies = len([x for x in self.grid.players_and_coordinates.keys() if type(x) == Zombie])
+        self.number_of_humans = len([x for x in self.grid.players_and_coordinates.keys() if type(x) == Human])
 
     def set_up(self, grid_class=Grid):  # Dependency injection to ease testing
         """
@@ -79,11 +84,9 @@ class Game:
         """
         while self.number_of_humans > 0:
             Display(self.grid).game_display(self.number_of_humans, self.number_of_zombies)
-            self.grid.humans_move()
-            self.grid.zombies_move()
+            self.grid.players_move()
             self.grid.convert_if_needed()
-            self.number_of_humans = len(self.grid.human_coordinates)
-            self.number_of_zombies = len(self.grid.zombie_coordinates)
+            self._update_number_of_players()
             self.number_of_turns += 1
             sleep(0.4)
 

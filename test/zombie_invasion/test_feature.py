@@ -97,7 +97,7 @@ def test_human_moves_one_space():
     human = Human()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [2, 1])
-    grid.humans_move()
+    grid.players_move()
     display = Display(grid)
     rendered_display = display.render()
 
@@ -117,7 +117,7 @@ def test_human_does_not_move_if_wall(mock_random):
     human = Human()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [0, 0])
-    grid.humans_move()
+    grid.players_move()
     display = Display(grid)
     rendered_display = display.render()
     assert rendered_display[0].loc[0] == "H"
@@ -129,16 +129,26 @@ I can watch a zombie move towards the human
 So that my desire for human demolition by zombies can be incited
 """
 
-def test_zombie_moves_towards_human():
+
+@patch("zombie_invasion.human.Human.move")
+def test_zombie_moves_towards_human(mock_move):
     # Given a program in progress
     # When it is time for a new go or turn
     # Then the zombie will move 1 pace towards the human
+    """
+    Set up the game with Human on 0, 0 and zombie on 0, 2
+    Ensure that human will not move on their go
+    Call players-move()
+    Assert that zombie is at 0, 1
+    """
+    mock_move.return_value = [0, 0]
+
     human = Human()
     zombie = Zombie()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [0, 0])
     grid.add_player(zombie, [0, 2])
-    grid.zombies_move()
+    grid.players_move()
     display = Display(grid)
     rendered_display = display.render()
 
@@ -160,10 +170,10 @@ def test_zombie_turns_human_into_zombie():
     zombie = Zombie()
     grid = Grid(size=[4, 3])
     grid.add_player(human, [0, 0])
-    grid.add_player(zombie, [0, 1])
-    grid.zombies_move()
+    grid.add_player(zombie, [0, 0])
     grid.convert_if_needed()
-    assert len(grid.zombie_coordinates) == 2
+    zombies = [x for x in grid.players_and_coordinates.keys() if type(x) == Zombie]
+    assert len(zombies) == 2
 
 
 """As a viewer

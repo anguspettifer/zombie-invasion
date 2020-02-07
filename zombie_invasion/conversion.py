@@ -1,5 +1,6 @@
 class Conversion:
     """ Knows how to convert source object to destination based on matching criteria """
+    #TODO: Have I broken Conversion?
     def __init__(self, source_items, destination_items, source_object, destination_object):
         self.source_items = source_items
         self.destination_items = destination_items
@@ -9,9 +10,10 @@ class Conversion:
         self._sharing_squares()
 
     def _sharing_squares(self):
+        # TODO: Poorly named method
         """Given a source item, returns the number of destination items and other source items with the same criteria"""
 
-        for source in self.source_items:
+        for source in self.source_items: # WHy not for key, value?
             source_criteria = self.source_items[source]
             number_source_objects = len([k for k in self.source_items if self.source_items[k] == source_criteria])
             number_destination_object = len([k for k in self.destination_items if self.destination_items[k] == source_criteria])

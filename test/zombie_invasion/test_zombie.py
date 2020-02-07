@@ -1,9 +1,10 @@
 import pytest
 from mock import Mock, patch
 
+from zombie_invasion.human import Human
 from zombie_invasion.zombie import Zombie
 
-
+# TODO: ASK ANDY. I changed all the mock humans to actual humans in order to pass line 60. Does this increase coupling?
 def test_zombie_colour_default():
     zombie = Zombie()
     assert zombie.render == 'Z'
@@ -15,9 +16,9 @@ def test_zombie_move():
     """
     zombie = Zombie()
     coordinates = [1, 2]
-    human_coordinates = {Mock(): [1, 0]}
+    players_and_coordinates = {Human(): [1, 0]}
 
-    assert zombie.move(coordinates, human_coordinates) == [1, 1]
+    assert zombie.move(coordinates, None, players_and_coordinates) == [1, 1]
 
 
 def test_zombie_move_choice():
@@ -27,11 +28,11 @@ def test_zombie_move_choice():
     zombie = Zombie()
     coordinates = [1, 2]
     human_coordinates = {
-        Mock(): [1, 3],
-        Mock(): [1, 0]
+        Human(): [1, 3],
+        Human(): [1, 0]
     }
 
-    assert zombie.move(coordinates, human_coordinates) == [1, 3]
+    assert zombie.move(coordinates, None, human_coordinates) == [1, 3]
 
 
 def side_effect(list_):
@@ -45,12 +46,12 @@ def test_zombie_move_random(random):
     zombie = Zombie()
     coordinates = [1, 2]
     human_coordinates = {
-        Mock(): [1, 4],
-        Mock(): [1, 0]
+        Human(): [1, 4],
+        Human(): [1, 0]
     }
 
     random.choice.side_effect = side_effect
-    assert zombie.move(coordinates, human_coordinates) == [1, 3]
+    assert zombie.move(coordinates, None, human_coordinates) == [1, 3]
 
 
 @patch("zombie_invasion.zombie.random")
@@ -62,8 +63,8 @@ def test_zombie_move_memory(random):
     """
     zombie = Zombie()
     coordinates = [1, 1]
-    mock_human_1 = Mock()
-    mock_human_2 = Mock()
+    mock_human_1 = Human()
+    mock_human_2 = Human()
 
     human_coordinates_1 = {
         mock_human_1: [3, 1],
@@ -76,8 +77,8 @@ def test_zombie_move_memory(random):
     }
 
     random.choice.side_effect = side_effect
-    new_coordinates = zombie.move(coordinates, human_coordinates_1)
-    assert zombie.move(new_coordinates, human_coordinates_2) == [3, 1]
+    new_coordinates = zombie.move(coordinates, None, human_coordinates_1)
+    assert zombie.move(new_coordinates, None, human_coordinates_2) == [3, 1]
 
 
 @pytest.mark.parametrize("x, y, expected", [(4, 1, 3), (4, 2, 3), (2, 2, 2), (0, 3, 1)])
@@ -96,9 +97,9 @@ def test__random_closest_human_coordinates():
     """
     zombie = Zombie()
     coordinates = [1, 2]
-    human_1 = Mock()
-    human_2 = Mock()
-    human_3 = Mock()
+    human_1 = Human()
+    human_2 = Human()
+    human_3 = Human()
 
     human_coordinates = {
         human_1: [1, 4],

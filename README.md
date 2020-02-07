@@ -106,3 +106,10 @@ Feels like it "should" be easier
 Out by one error:
 - should Display know that it has to add 1 to grid width?
 - Or should Human know that it has to subtract one?
+
+
+SOLID
+S: Only one reason to change
+Open/closed: - Open for extension, closed for modification
+
+Generally I think I want less (how do I render? questions and more What type am I? questions)

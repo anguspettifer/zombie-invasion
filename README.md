@@ -1,6 +1,14 @@
 # zombie-invasion
 
-## MVP user stories
+## How to use this repo
+
+- Clone the repo and install requirements into a virutal environment <br>
+- Run <code>python play_game </code> <br>
+- Follow the instructions <br>
+- Let the carnage ensue
+
+
+## User stories
 
 **As a viewer
 I can watch a human and zombie on the playing grid
@@ -78,47 +86,3 @@ When I input the paramaters
 Then the game will play out on my screen
 
 
-
-
-## Considerations:
-
-1. I am adding the "everybody move" method to the Grid class and that is causing me to make changes to 
-row too. tightly coupled?
-2. Struggling with the fact that __rows is private but I want to test the state of a specific row following
-running the everybody_move method in the grid class. I'm making it public, but only for testing purposes... is this ok??
-
-
-Origonal design is 
-Square -> Row -> Grid
-
-Now I think I want to get rid of Row and just give squares coordinates. 
-The big question is, should a square know it's co-ordinates? Or should it just know it's a square and will render. 
-I feel that the grid is responsible for coo-rdinate knowledge. 
-
-Thinking of how to display the board is a key and challenging problem
-I have a dict of objects with coordinates and I want to say:
-for all the coords, render the object relating to those coords, 
-For the others. don't. 
-
-pandas has the answer. in fact. lets just render dataframes. They are fine to look at for this purpose.
-
-
-dependency inversion. A zombie or human should now how it moves
-a grid should call the method and provide the right information. 
-
-
-Very stuck on "conver_if_needed" method in grid
-felt like a big decision to make a new class
-Feels like it "should" be easier
-
-
-Out by one error:
-- should Display know that it has to add 1 to grid width?
-- Or should Human know that it has to subtract one?
-
-
-SOLID
-S: Only one reason to change
-Open/closed: - Open for extension, closed for modification
-
-Generally I think I want less (how do I render? questions and more What type am I? questions)

@@ -123,7 +123,7 @@ def test_game_set_up_creates_grid(mock_input, mock_print):
 
 @patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
-def test_game_set_up_creates_grid(mock_input, mock_print):
+def test_game_set_up_creates_grid_with_strings(mock_input, mock_print):
     """
     Bug fix dimensions as strings
     """
@@ -133,14 +133,14 @@ def test_game_set_up_creates_grid(mock_input, mock_print):
     game = set_up_game_with(mock_input, mock_print, dimensions, number_of_humans, number_of_zombies)
     assert game.grid.width == 3
     assert game.grid.length == 2
-    assert len(game.grid.zombie_coordinates) == 3
-    assert len(game.grid.human_coordinates) == 5
+    assert game.number_of_zombies == 3
+    assert game.number_of_humans == 5
 
 
 @patch('zombie_invasion.game.print')
 @patch('zombie_invasion.game.input')
 @patch('zombie_invasion.game.random')
-def test_game_set_up_creates_grid(mock_random, mock_input, mock_print):
+def test_game_set_up_creates_grid_with_zombies(mock_random, mock_input, mock_print):
     """
     Bug fix.
     Create game with 2 zombies and no humans

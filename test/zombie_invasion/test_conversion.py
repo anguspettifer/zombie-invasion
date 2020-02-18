@@ -18,7 +18,6 @@ def test_conversion():
     conversion = Conversion(
         source_items={MockSource(): "A"},
         destination_items={MockDestination(): "A"},
-        source_object=MockSource,
         destination_object=MockDestination
     )
     conversion.convert()
@@ -37,7 +36,6 @@ def test_conversion_2_source_1_destination():
     conversion = Conversion(
         source_items={MockSource(): "A", MockSource(): "A"},
         destination_items={MockDestination(): "A"},
-        source_object=MockSource,
         destination_object=MockDestination
     )
     conversion.convert()
@@ -54,7 +52,6 @@ def test_conversion_1_source_2_destination():
     conversion = Conversion(
         source_items={MockSource(): "A"},
         destination_items={MockDestination(): "A", MockDestination(): "A"},
-        source_object=MockSource,
         destination_object=MockDestination
     )
     conversion.convert()
@@ -86,7 +83,6 @@ def test_one_to_one_matching():
             MockDestination(): "D",
 
         },
-        source_object=MockSource,
         destination_object=MockDestination
     )
 
